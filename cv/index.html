@@ -36,16 +36,16 @@
     <div class="entry">
       <div class="entry-head">
         <div class="t"><a href="/research/llc-jacobian-rank/">Linear does not mean regular: Jacobian rank limits the learning coefficient</a></div>
-        <span class="series">Part 1 of 2</span><div class="when">2026</div>
+        <div class="when">2026</div>
       </div>
-      <div class="desc">Tested whether a network that is linear in its parameters looks regular under the local learning coefficient. It does not: the Jacobian rank is capped by the data rather than the parameter count, so the NTK-scaled network's effective dimension is nearly width-invariant, while the muP-scaled one falls with width and ends up about 4x more degenerate at width 1024. The gap therefore widens for the opposite reason to the one predicted.</div>
+      <div class="desc">How the local learning coefficient scales with width in the lazy and rich learning regimes, set by NTK and muP parametrization. A network linear in its parameters does not look regular under the LLC: its Jacobian rank is capped by the dataset rather than the parameter count, so the NTK network's LLC is nearly width-invariant while the muP network's falls with width, ending about 4x lower at width 1024.</div>
     </div>
     <div class="entry">
       <div class="entry-head">
-        <div class="t"><a href="/research/llc-localization-scale/">The localization scale is part of the measurement</a></div>
-        <span class="series">Part 2 of 2</span><div class="when">2026</div>
+        <div class="t"><a href="/research/llc-hyperparameters/">LLC estimates are only as good as their hyperparameters</a></div>
+        <div class="when">2026</div>
       </div>
-      <div class="desc">Identifies a localized SGLD estimate of the learning coefficient at finite gamma as the ridge effective degrees of freedom at penalty gamma/n-beta. Holding gamma numerically fixed across models whose top curvature differs by 400x reads each at a different point on the same bias curve, which was enough to reverse the sign of the effect in Part 1. Proposes fixing the dimensionless ratio kappa instead, validates the resulting bias prediction against models of known RLCT, and connects the whole thing to why damping makes influence functions fragile.</div>
+      <div class="desc">Estimating the LLC means sampling from a posterior held near the trained weights by a spring of stiffness gamma, a number conventionally fixed once and rarely reported. At finite gamma the estimator returns a curvature-weighted count of directions, so fixing gamma across models whose curvature differs by 400x measures each of them differently. Proposes fixing the dimensionless ratio kappa instead and validates the resulting bias against models whose LLC is known exactly.</div>
     </div></section>
   <section class="block"><h2>Experience</h2>
     <div class="entry">

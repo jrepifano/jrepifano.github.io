@@ -69,10 +69,6 @@ def shell(title, body, *, page, description=DESC, extra_head=""):
 
 
 
-def series(r):
-    """Optional sequence marker, e.g. "Part 1 of 2". Absent for standalone notes."""
-    return f'<span class="series">{esc(r["series"])}</span>' if r.get("series") else ""
-
 # --------------------------------------------------------------------- landing
 def page_index():
     d = DATA
@@ -82,7 +78,7 @@ def page_index():
     <div class="entry">
       <div class="entry-head">
         <div class="t"><a href="{r['href']}">{esc(r['title'])}</a></div>
-        {series(r)}<div class="when">{esc(r['date'])}</div>
+        <div class="when">{esc(r['date'])}</div>
       </div>
       <div class="desc">{esc(r['summary'])}</div>
     </div>""" for r in d["research"])
@@ -178,7 +174,7 @@ def page_cv():
     <div class="entry">
       <div class="entry-head">
         <div class="t"><a href="{r['href']}">{esc(r['title'])}</a></div>
-        {series(r)}<div class="when">{esc(r['date'])}</div>
+        <div class="when">{esc(r['date'])}</div>
       </div>
       <div class="desc">{esc(r['summary'])}</div>
     </div>""" for r in d["research"])
@@ -224,16 +220,13 @@ def page_research():
     <div class="entry">
       <div class="entry-head">
         <div class="t"><a href="{r['href']}">{esc(r['title'])}</a></div>
-        {series(r)}<div class="when">{esc(r['date'])}</div>
+        <div class="when">{esc(r['date'])}</div>
       </div>
       <div class="desc">{esc(r['summary'])}</div>
     </div>""" for r in DATA["research"])
     body = f"""<div class="rule-top"></div>
   <div class="col">
-    <h1>Research and writing</h1>
-    <p class="lede">Notes and experiments, mostly on singular learning theory,
-    interpretability, and what our measurement tools actually measure. Each is a
-    self-contained page with its data and code linked.</p>
+    <h1>Research</h1>
   </div>
   <section class="block">{items}</section>
   <section class="block">

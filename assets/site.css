@@ -128,14 +128,6 @@ section.block > h2 { margin-bottom: 14px; }
   margin-left: auto; font-family: var(--font-mono); font-size: 0.74rem;
   color: var(--ink-3); white-space: nowrap;
 }
-/* Marks entries that are one part of a multi-post sequence, so the listing
-   reads as an ordered pair rather than two unrelated notes. */
-.entry-head .series {
-  font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.09em;
-  text-transform: uppercase; color: var(--ink-3);
-  border: 1px solid var(--rule); border-radius: 2px;
-  padding: 2px 6px; white-space: nowrap;
-}
 .entry .org { color: var(--ink-2); font-size: 0.95rem; margin-top: 1px; }
 .entry .sub {
   font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.06em;
