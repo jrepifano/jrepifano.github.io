@@ -94,12 +94,16 @@ def page_index():
         pubs += f'\n    <div class="pubgroup"><div class="g">{esc(g["group"])}</div>{items}</div>'
 
     body = f"""<div class="rule-top"></div>
-  <div class="col">
-    <h1>{esc(d['name'])}</h1>
-    <p class="lede">{esc(d['summary'])}</p>
-    <div class="contact-row">
-      <a href="mailto:{d['email']}">{d['email']}</a>{contacts}
-      <span>{esc(d['location'])}</span>
+  <h1 class="sr-only">{esc(d['name'])}</h1>
+  <div class="intro">
+    <img class="portrait" src="/assets/headshot.jpg" width="132" height="132"
+         alt="Jacob Epifano">
+    <div class="intro-text">
+      <p class="role">{esc(d['title'])} &middot; {esc(d['location'])}</p>
+      <p class="lede">{esc(d['summary'])}</p>
+      <div class="contact-row">
+        <a href="mailto:{d['email']}">{d['email']}</a>{contacts}
+      </div>
     </div>
   </div>
 

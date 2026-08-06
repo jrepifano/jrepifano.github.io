@@ -7,22 +7,22 @@
 <style>*{margin:0;padding:0}html{-webkit-text-size-adjust:100%}</style>
 </head>
 <body>
-<nav style="max-width:104ch;margin:0 auto;padding:26px 24px 0;display:flex;gap:26px;align-items:baseline;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.76rem"><a href="/" style="font-family:ui-sans-serif,system-ui;font-weight:640;font-size:.98rem;color:inherit;text-decoration:none">Jacob Epifano</a><a href="/research/" style="margin-left:auto;color:inherit;opacity:.6;text-decoration:none;letter-spacing:.06em;text-transform:uppercase">Research</a><a href="/cv/" style="color:inherit;opacity:.6;text-decoration:none;letter-spacing:.06em;text-transform:uppercase">CV</a></nav>
+<nav style="max-width:var(--wide,104ch);margin:0 auto;padding:26px 24px 0;display:flex;gap:26px;align-items:baseline"><a href="/" style="font-family:ui-sans-serif,system-ui;font-weight:640;font-size:.98rem;color:inherit;text-decoration:none">Jacob Epifano</a><a href="/research/" style="margin-left:auto;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.76rem;color:inherit;opacity:.6;text-decoration:none;letter-spacing:.06em;text-transform:uppercase">Research</a><a href="/cv/" style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.76rem;color:inherit;opacity:.6;text-decoration:none;letter-spacing:.06em;text-transform:uppercase">CV</a></nav>
 
 <style>
 /* ============================ tokens ============================ */
 :root {
   color-scheme: light;
-  --ground:      #f4f5f3;
-  --surface:     #fcfcfb;
-  --sunken:      #eceee9;
-  --ink:         #101418;
-  --ink-2:       #4d525a;
-  --ink-3:       #868b93;
-  --rule:        #e0e1dc;
-  --rule-2:      #c9cbc4;
-  --accent:      #1f4e8c;
-  --accent-soft: #e7edf6;
+  --ground:      #edece7;
+  --surface:     #f6f5f1;
+  --sunken:      #e3e1da;
+  --ink:         #23262a;
+  --ink-2:       #55595f;
+  --ink-3:       #8a8f96;
+  --rule:        #dbd8d0;
+  --rule-2:      #c3bfb5;
+  --accent:      #3f6a94;
+  --accent-soft: #e2e8ef;
 
   --s1: #2a78d6;   /* NTK / lazy      */
   --s2: #eb6834;   /* muP / rich      */
@@ -43,16 +43,16 @@
 @media (prefers-color-scheme: dark) {
   :root:where(:not([data-theme="light"])) {
     color-scheme: dark;
-    --ground:      #0e0f11;
-    --surface:     #1a1a19;
-    --sunken:      #151615;
-    --ink:         #f4f5f7;
-    --ink-2:       #b9bcc2;
-    --ink-3:       #868b93;
-    --rule:        #2a2b29;
-    --rule-2:      #3d3e3b;
-    --accent:      #6ea8f0;
-    --accent-soft: #16233a;
+    --ground:      #1c1f23;
+    --surface:     #242830;
+    --sunken:      #191c20;
+    --ink:         #e7e9ec;
+    --ink-2:       #adb4bd;
+    --ink-3:       #7c848d;
+    --rule:        #2f343b;
+    --rule-2:      #414750;
+    --accent:      #86b0d8;
+    --accent-soft: #1f2a35;
     --s1: #3987e5;
     --s2: #d95926;
     --s3: #199e70;
@@ -63,16 +63,16 @@
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --ground:      #0e0f11;
-  --surface:     #1a1a19;
-  --sunken:      #151615;
-  --ink:         #f4f5f7;
-  --ink-2:       #b9bcc2;
-  --ink-3:       #868b93;
-  --rule:        #2a2b29;
-  --rule-2:      #3d3e3b;
-  --accent:      #6ea8f0;
-  --accent-soft: #16233a;
+  --ground:      #1c1f23;
+  --surface:     #242830;
+  --sunken:      #191c20;
+  --ink:         #e7e9ec;
+  --ink-2:       #adb4bd;
+  --ink-3:       #7c848d;
+  --rule:        #2f343b;
+  --rule-2:      #414750;
+  --accent:      #86b0d8;
+  --accent-soft: #1f2a35;
   --s1: #3987e5;
   --s2: #d95926;
   --s3: #199e70;
@@ -159,7 +159,7 @@ header.masthead {
   margin-bottom: 40px;
 }
 .masthead .rule-top {
-  height: 3px;
+  height: 2px;
   background: var(--ink);
   margin-bottom: 20px;
 }
