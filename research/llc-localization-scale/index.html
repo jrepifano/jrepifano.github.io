@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Linear does not mean regular: Jacobian rank limits the learning coefficient</title>
+<title>The localization scale is part of the measurement</title>
 <style>*{margin:0;padding:0}html{-webkit-text-size-adjust:100%}</style>
 </head>
 <body>
@@ -478,167 +478,54 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
 <header class="masthead">
   <div class="rule-top"></div>
   <p class="eyebrow">Notes &middot; singular learning theory</p>
-  <h1>Linear does not mean regular: Jacobian rank limits the learning coefficient</h1>
+  <h1>The localization scale is part of the measurement</h1>
   <p class="standfirst">
-    A network that is linear in its parameters is not thereby a regular model. Its
-    Jacobian is rank-deficient, so its effective dimension is capped by the data
-    rather than the parameter count and is nearly width-invariant. Under feature
-    learning it falls with width instead, making a &micro;P network about four
-    times more degenerate than an NTK one at width 1024 &mdash; the gap widening
-    for the opposite reason to the one I predicted.
+    A localized SGLD estimate of the local learning coefficient computes the ridge
+    effective degrees of freedom at penalty <span class="m" data-tex="\gamma/n\beta"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mi mathvariant="normal">/</mi><mi>n</mi><mi>β</mi></mrow><annotation encoding="application/x-tex">\gamma/n\beta</annotation></semantics></math></span>.
+    Holding <span class="m" data-tex="\gamma"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi></mrow><annotation encoding="application/x-tex">\gamma</annotation></semantics></math></span> numerically fixed across models
+    whose top curvature differs by 400&times; reads each of them at a different point
+    on the same bias curve &mdash; here, enough to reverse the sign of the effect
+    being measured. Holding the dimensionless ratio
+    <span class="m" data-tex="\kappa = n\beta\lambda_{\max}/\gamma"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mo>=</mo><mi>n</mi><mi>β</mi><msub><mi>λ</mi><mi>max</mi><mo>⁡</mo></msub><mi mathvariant="normal">/</mi><mi>γ</mi></mrow><annotation encoding="application/x-tex">\kappa = n\beta\lambda_{\max}/\gamma</annotation></semantics></math></span> fixed
+    instead costs nothing and carries a prediction that can be checked against models
+    of known RLCT.
   </p>
   <div class="byline">
-    <span>FC / MNIST &middot; one-hot MSE</span>
-    <span>3 seeds &times; 3 widths &times; 2 parametrizations</span>
-    <span>Hessian-based and SGLD estimates</span>
+    <span>Localized SGLD &middot; WBIC</span>
+    <span>ridge effective degrees of freedom</span>
+    <span>validated against known RLCTs</span>
   </div>
 </header>
 
 <nav class="seq">
-  <span class="seq-pos">Part 1 of 2</span>
-  <a href="https://jrepifano.github.io/research/llc-localization-scale/">Part 2: The localization scale is part of the measurement &rarr;</a>
+  <span class="seq-pos">Part 2 of 2</span>
+  <a href="https://jrepifano.github.io/research/llc-jacobian-rank/">Part 1: Linear does not mean regular &rarr;</a>
 </nav>
 
 <!-- ============================================================ -->
 <section>
   <div class="sec-head">
-    <h2>Where this started</h2>
+    <h2>Where this comes from</h2>
   </div>
   <div class="col">
     <p>
-      I have been reading the alignment work coming out of Timaeus, which uses
-      singular learning theory to put a number on how degenerate a trained
-      network's minimum is. That number is the local learning coefficient
-      <span class="lh">&lambda;</span>. A regular statistical model with <span class="m" data-tex="d"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi></mrow><annotation encoding="application/x-tex">d</annotation></semantics></math></span> parameters has
-      <span class="m" data-tex="\lambda = d/2"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>λ</mi><mo>=</mo><mi>d</mi><mi mathvariant="normal">/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">\lambda = d/2</annotation></semantics></math></span>. Singular models sit below that, and
-      the further below, the more degenerate the geometry.
-      <span class="ref"><a href="#r4">[Watanabe]</a><a href="#r5">[Lau et al.]</a></span>
+      <a href="https://jrepifano.github.io/research/llc-jacobian-rank/">A companion post</a> compares two parametrizations of the same
+      network under the local learning coefficient. Getting a comparison that held
+      up took longer than running the experiment did, because my first configuration
+      reported the &micro;P network 16.9&times; <em>higher</em> at width 1024. The
+      ordering was reversed relative to the correct answer and the magnitude
+      inflated by more than an order of magnitude.
     </p>
     <p>
-      Separately I had been reading about the neural tangent kernel and the
-      distinction between lazy and rich training.
-      <span class="ref"><a href="#r1">[Jacot et al.]</a><a href="#r2">[Chizat et al.]</a><a href="#r3">[Yang &amp; Hu]</a></span>
-      In the lazy regime a wide network barely moves from initialization and its
-      function is well approximated by a first-order expansion,
-      <span class="m" data-tex="f(x,w) \approx f(x,w_0) + J(x)(w - w_0)"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><mi>w</mi><mo stretchy="false">)</mo><mo>≈</mo><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><msub><mi>w</mi><mn>0</mn></msub><mo stretchy="false">)</mo><mo>+</mo><mi>J</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mi>w</mi><mo>−</mo><msub><mi>w</mi><mn>0</mn></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">f(x,w) \approx f(x,w_0) + J(x)(w - w_0)</annotation></semantics></math></span>,
-      so it behaves like a linear model in the tangent features. In the rich regime
-      the features themselves move and no such expansion holds.
+      The cause was not a bug. It was an error in how I set one hyperparameter, of
+      the kind that survives review because the hyperparameter is conventionally
+      held fixed and rarely reported. The estimator I was using, the standard one,
+      returns a quantity indexed by a scale I had chosen without reference to the
+      models being compared.
     </p>
     <p>
-      Those two literatures suggest a direct experiment. If a lazy network is
-      effectively a linear model, and linear models are the regular case where
-      <span class="m" data-tex="\lambda = d/2"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>λ</mi><mo>=</mo><mi>d</mi><mi mathvariant="normal">/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">\lambda = d/2</annotation></semantics></math></span>, then a lazy network should look
-      regular by this measure and a rich one should look singular. My hypotheses
-      going in were:
-    </p>
-    <ul class="tight">
-      <li><b>H1.</b> The NTK network sits at or near <span class="m" data-tex="d/2"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mi mathvariant="normal">/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">d/2</annotation></semantics></math></span>,
-        so <span class="lh">&lambda;</span> grows roughly in proportion to parameter count.</li>
-      <li><b>H2.</b> The &micro;P network sits well below <span class="m" data-tex="d/2"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mi mathvariant="normal">/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">d/2</annotation></semantics></math></span>.</li>
-      <li><b>H3.</b> The NTK network therefore has the larger coefficient, and the
-        gap widens with width as it acquires more parameters to be regular in.</li>
-    </ul>
-    <p>
-      The setup isolates the regime. One fully-connected network on MNIST trained
-      with one-hot MSE, in two parametrizations that share an identical loss
-      surface, the same initialization and the same width-aware prior scale,
-      differing only in how the per-tensor learning rate scales with width. NTK
-      parametrization holds the per-tensor learning rate flat and induces the lazy,
-      or kernel, regime. &micro;P divides it by fan-in and induces the rich, or
-      feature-learning, regime. I refer to the two conditions by parametrization
-      throughout, since that is what was manipulated. Three widths, three seeds
-      each.
-    </p>
-
-    <p>
-      The two parametrizations move the conditions in the intended directions.
-      Relative weight drift from initialization falls with width under NTK, from
-      2.49 at width 64 to 0.90 at width 1024, and spreads evenly across layers
-      (0.83, 0.96, 1.03), which is the signature of a kernel that is freezing.
-      Under &micro;P it holds at 5.01 and concentrates in the input layer, 7.08
-      against 0.05 and 0.12 for the two layers above it. Drift is only suggestive
-      though, and a direct test below shows the NTK condition does not actually
-      reach the lazy regime at these widths.
-    </p>
-
-    <h3>What the measurements show</h3>
-    <p>
-      H3 holds. The NTK network has the larger coefficient at every width, and the
-      gap widens with width. H2 holds trivially, since both models sit five orders
-      of magnitude below <span class="m" data-tex="d/2"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mi mathvariant="normal">/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">d/2</annotation></semantics></math></span>. H1 fails, and its failure
-      also changes the mechanism behind H3.
-    </p>
-    <p>
-      For a model exactly linear in its parameters, with Gaussian noise and a
-      realizable target, the loss is quadratic and the learning coefficient is
-    </p>
-    <div class="formula" data-tex="\lambda = \operatorname{rank}(J^{\top}\!J)\,/\,2"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>λ</mi><mo>=</mo><mi mathvariant="normal">rank</mi><mo>⁡</mo><mo stretchy="false">(</mo><msup><mi>J</mi><mi mathvariant="normal">⊤</mi></msup><mtext> ⁣</mtext><mi>J</mi><mo stretchy="false">)</mo><mtext> </mtext><mi mathvariant="normal">/</mi><mtext> </mtext><mn>2</mn></mrow><annotation encoding="application/x-tex">\lambda = \operatorname{rank}(J^{\top}\!J)\,/\,2</annotation></semantics></math></div>
-    <p>
-      which equals <span class="m" data-tex="d/2"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mi mathvariant="normal">/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">d/2</annotation></semantics></math></span> only when the Jacobian has full
-      rank. Here it does not. The Jacobian has at most
-      <span class="m" data-tex="n\!\cdot\!C = 1024 \times 10 = 10{,}240"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mtext> ⁣</mtext><mo>⋅</mo><mtext> ⁣</mtext><mi>C</mi><mo>=</mo><mn>1024</mn><mo>×</mo><mn>10</mn><mo>=</mo><mn>10,240</mn></mrow><annotation encoding="application/x-tex">n\!\cdot\!C = 1024 \times 10 = 10{,}240</annotation></semantics></math></span> independent
-      rows, against <span class="m" data-tex="d = 1.86\text{M}"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mo>=</mo><mn>1.86</mn><mtext>M</mtext></mrow><annotation encoding="application/x-tex">d = 1.86\text{M}</annotation></semantics></math></span> parameters at width 1024.
-      Linearity gives a quadratic loss surface; it does not give full rank. The NTK
-      network is as overparameterized as the &micro;P network, and places its
-      degeneracy in flat directions rather than higher-order ones.
-    </p>
-    <p>
-      The NTK network's ceiling is therefore set by the data rather than by the
-      parameter count, and should be approximately width-independent once
-      <span class="m" data-tex="d"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi></mrow><annotation encoding="application/x-tex">d</annotation></semantics></math></span> exceeds <span class="m" data-tex="n\cdot C"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>⋅</mo><mi>C</mi></mrow><annotation encoding="application/x-tex">n\cdot C</annotation></semantics></math></span>,
-      which holds at every width measured. That is what I observe: the NTK network's
-      effective dimension moves from 8.2 to 15.4 across a sixteenfold increase in
-      width, growing as <span class="m" data-tex="w^{0.23}"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>w</mi><mn>0.23</mn></msup></mrow><annotation encoding="application/x-tex">w^{0.23}</annotation></semantics></math></span> rather than in
-      proportion to <span class="m" data-tex="d"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi></mrow><annotation encoding="application/x-tex">d</annotation></semantics></math></span>.
-    </p>
-    <p>
-      The gap in H3 therefore widens for the opposite reason to the one I assumed.
-      It is not that the NTK network climbs toward <span class="m" data-tex="d/2"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mi mathvariant="normal">/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">d/2</annotation></semantics></math></span>.
-      The NTK network is nearly flat in width, and the &micro;P network's effective
-      dimension <em>falls</em>, from 7.8 to 3.8 over the same range. At width 1024
-      the &micro;P network is about <b>four times more degenerate</b> than the NTK
-      network; at width 64 the two are nearly equal. Feature learning is what moves,
-      and it moves toward greater degeneracy as capacity grows.
-    </p>
-    <p>
-      <b>Are these conditions actually lazy and rich?</b> Relative weight drift is
-      suggestive, so I tested the defining property directly. Lazy training means
-      the first-order expansion around initialization stays accurate for the whole
-      trajectory, so I measured
-      <span class="m" data-tex="\lVert f(w_T) - [f(w_0) + J(w_0)\Delta w]\rVert \,/\, \lVert f(w_T) - f(w_0)\rVert"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">∥</mo><mi>f</mi><mo stretchy="false">(</mo><msub><mi>w</mi><mi>T</mi></msub><mo stretchy="false">)</mo><mo>−</mo><mo stretchy="false">[</mo><mi>f</mi><mo stretchy="false">(</mo><msub><mi>w</mi><mn>0</mn></msub><mo stretchy="false">)</mo><mo>+</mo><mi>J</mi><mo stretchy="false">(</mo><msub><mi>w</mi><mn>0</mn></msub><mo stretchy="false">)</mo><mi mathvariant="normal">Δ</mi><mi>w</mi><mo stretchy="false">]</mo><mo stretchy="false">∥</mo><mtext> </mtext><mi mathvariant="normal">/</mi><mtext> </mtext><mo stretchy="false">∥</mo><mi>f</mi><mo stretchy="false">(</mo><msub><mi>w</mi><mi>T</mi></msub><mo stretchy="false">)</mo><mo>−</mo><mi>f</mi><mo stretchy="false">(</mo><msub><mi>w</mi><mn>0</mn></msub><mo stretchy="false">)</mo><mo stretchy="false">∥</mo></mrow><annotation encoding="application/x-tex">\lVert f(w_T) - [f(w_0) + J(w_0)\Delta w]\rVert \,/\, \lVert f(w_T) - f(w_0)\rVert</annotation></semantics></math></span>, which is 0 for an exactly
-      linear trajectory.
-    </p>
-    <div class="prose-table" id="tv-lin"></div>
-    <p>
-      <b>The NTK-scaled condition is not in the lazy regime at these widths.</b> A
-      value above 1 means the linearization predicts the function change worse than
-      predicting no change at all. It is roughly six times closer to linear than the
-      &micro;P condition and moves the right way with width, but it is not lazy in
-      absolute terms, and the 0.90 relative drift at width 1024 already hinted at
-      that.
-    </p>
-    <p>
-      This does not affect the rank argument, which is why it is stated in terms of
-      the trained Jacobian rather than the initial one. For MSE near interpolation
-      the Gauss-Newton term dominates, so
-      <span class="m" data-tex="H \approx (2/n)\,J(w_T)^{\top}\!J(w_T)"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>H</mi><mo>≈</mo><mo stretchy="false">(</mo><mn>2</mn><mi mathvariant="normal">/</mi><mi>n</mi><mo stretchy="false">)</mo><mtext> </mtext><mi>J</mi><mo stretchy="false">(</mo><msub><mi>w</mi><mi>T</mi></msub><msup><mo stretchy="false">)</mo><mi mathvariant="normal">⊤</mi></msup><mtext> ⁣</mtext><mi>J</mi><mo stretchy="false">(</mo><msub><mi>w</mi><mi>T</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">H \approx (2/n)\,J(w_T)^{\top}\!J(w_T)</annotation></semantics></math></span>
-      and <span class="m" data-tex="\operatorname{rank}(J(w_T)) \le n\!\cdot\!C"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">rank</mi><mo>⁡</mo><mo stretchy="false">(</mo><mi>J</mi><mo stretchy="false">(</mo><msub><mi>w</mi><mi>T</mi></msub><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo>≤</mo><mi>n</mi><mtext> ⁣</mtext><mo>⋅</mo><mtext> ⁣</mtext><mi>C</mi></mrow><annotation encoding="application/x-tex">\operatorname{rank}(J(w_T)) \le n\!\cdot\!C</annotation></semantics></math></span> whether or
-      not training was lazy, so the data-limited ceiling applies to both conditions.
-      What it does affect is vocabulary: I describe the two conditions by parametrization
-      throughout and treat the lazy limit as the prediction being tested rather than
-      a regime I am operating in. Reaching it would need explicit lazy scaling
-      rather than more width, since the linearization error falls only as
-      <span class="m" data-tex="w^{0.21}"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>w</mi><mn>0.21</mn></msup></mrow><annotation encoding="application/x-tex">w^{0.21}</annotation></semantics></math></span> and extrapolates to width
-      <span class="m" data-tex="\sim 3 \times 10^{7}"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>∼</mo><mn>3</mn><mo>×</mo><msup><mn>10</mn><mn>7</mn></msup></mrow><annotation encoding="application/x-tex">\sim 3 \times 10^{7}</annotation></semantics></math></span> before it becomes defensible.
-    </p>
-    <p>
-      Establishing those numbers required resolving a measurement problem first. My
-      initial configuration reported the ordering reversed and the magnitude
-      inflated by more than an order of magnitude, for reasons that turned out to be
-      structurally identical to a problem I had written about in a different
-      context. That is a separate finding with consequences beyond this experiment,
-      so it has its own post; the part needed to read the results below is
-      summarised in two sections' time.
+      This post is that argument. It is structurally the same problem as damping in
+      influence functions, which is where I first met it, so it starts there.
     </p>
   </div>
 </section>
@@ -646,200 +533,311 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
 <!-- ============================================================ -->
 <section>
   <div class="sec-head">
-    <h2>The Jacobian result</h2>
+    <h2>A familiar estimator problem</h2>
   </div>
   <div class="col">
     <p>
-      The quantity plotted below is computed from the Hessian rather than by SGLD.
-      It is still a stochastic estimate, using 8 Hutchinson probes with
-      conjugate-gradient solves to tolerance 1e-6, so I call it the
-      Hessian-based reference estimate rather than exact; seed and probe spread
-      are reported alongside. The next section justifies why it is the
-      appropriate quantity.
+      Some years ago I worked on why influence functions are fragile in deep
+      networks. <span class="ref"><a href="#r7">[Epifano et al.]</a></span> The
+      influence of a training point on a test loss is
     </p>
-  </div>
-
-  <figure>
-    <div class="fig-head">
-      <p class="eyebrow">Figure 1</p>
-      <div class="fig-title">Effective dimension against width, reference and sampled</div>
-    </div>
-    <div class="legend" id="lg-width"></div>
-    <div class="chart-host" id="ch-width"></div>
-    <figcaption>
-      Solid lines are the Hessian-based reference estimate; dashed lines are the SGLD
-      estimate on the same checkpoints. The NTK network's reference value is nearly
-      width-invariant, consistent with the rank ceiling
-      <span class="m" data-tex="n\cdot C = 10{,}240"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>⋅</mo><mi>C</mi><mo>=</mo><mn>10,240</mn></mrow><annotation encoding="application/x-tex">n\cdot C = 10{,}240</annotation></semantics></math></span>. The &micro;P network falls with
-      width. The sampled estimate tracks the reference value for the &micro;P network and
-      departs from it for the NTK network at large width.
-    </figcaption>
-    <details class="tableview"><summary>Table view</summary>
-      <div class="table-scroll" id="tv-width"></div>
-    </details>
-  </figure>
-
-  <div class="col">
+    <div class="formula" data-tex="\mathcal{I}(z, z_{\text{test}}) \;=\; -\,\nabla L(z_{\text{test}})^{\top} H^{-1}\, \nabla L(z)"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="script">I</mi><mo stretchy="false">(</mo><mi>z</mi><mo separator="true">,</mo><msub><mi>z</mi><mtext>test</mtext></msub><mo stretchy="false">)</mo><mtext>  </mtext><mo>=</mo><mtext>  </mtext><mo>−</mo><mtext> </mtext><mi mathvariant="normal">∇</mi><mi>L</mi><mo stretchy="false">(</mo><msub><mi>z</mi><mtext>test</mtext></msub><msup><mo stretchy="false">)</mo><mi mathvariant="normal">⊤</mi></msup><msup><mi>H</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mtext> </mtext><mi mathvariant="normal">∇</mi><mi>L</mi><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\mathcal{I}(z, z_{\text{test}}) \;=\; -\,\nabla L(z_{\text{test}})^{\top} H^{-1}\, \nabla L(z)</annotation></semantics></math></div>
     <p>
-      The underlying spectra are consistent with the kernel picture. The NTK
-      network's top eigenvalue falls with width, from 2.07 to 0.82, and its Hessian
-      trace is essentially constant, 42.9 to 34.2. Its stable rank
-      <span class="m" data-tex="\operatorname{tr}(H)/\lambda_{\max}"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">tr</mi><mo>⁡</mo><mo stretchy="false">(</mo><mi>H</mi><mo stretchy="false">)</mo><mi mathvariant="normal">/</mi><msub><mi>λ</mi><mi>max</mi><mo>⁡</mo></msub></mrow><annotation encoding="application/x-tex">\operatorname{tr}(H)/\lambda_{\max}</annotation></semantics></math></span> roughly doubles, from
-      21 to 42, indicating some spectral spreading but nothing approaching the
-      growth in parameter count. The &micro;P network moves in the opposite direction on
-      every measure: top eigenvalue from 9.3 to 346, trace from 199 to 4201, stable
-      rank falling from 22 to 12. Feature learning concentrates curvature into
-      fewer and much stiffer directions.
+      <span class="ref"><a href="#r6">[Koh &amp; Liang]</a></span> and that
+      expression requires <span class="m" data-tex="H"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>H</mi></mrow><annotation encoding="application/x-tex">H</annotation></semantics></math></span> to be invertible, which in
+      practice requires positive definiteness, which in turn requires a unique
+      non-degenerate minimum. Deep networks satisfy none of these. The Hessian has
+      negative eigenvalues, the stochastic inverse-Hessian-vector product does not
+      converge, and the standard remedy is damping:
+      <span class="m" data-tex="(H + \lambda I)^{-1}"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mi>H</mi><mo>+</mo><mi>λ</mi><mi>I</mi><msup><mo stretchy="false">)</mo><mrow><mo>−</mo><mn>1</mn></mrow></msup></mrow><annotation encoding="application/x-tex">(H + \lambda I)^{-1}</annotation></semantics></math></span>, with
+      <span class="m" data-tex="\lambda"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>λ</mi></mrow><annotation encoding="application/x-tex">\lambda</annotation></semantics></math></span> set to a small constant such as 0.01. We
+      found the resulting estimates degraded sharply with parameter count and
+      argued that part of the observed fragility originated in the validation
+      procedure rather than the method.
     </p>
-  </div>
-</section>
-
-<!-- ============================================================ -->
-<section>
-  <div class="sec-head">
-    <h2>The estimate is indexed by a scale</h2>
-  </div>
-  <div class="col">
     <p>
-      Both the reference computation and the sampled estimate describe the same
+      What I did not appreciate then is that this is a singular-model problem, and
+      that SLT names it precisely. Kreer et al. make the same diagnosis in that
+      language: degenerate loss landscapes have non-invertible Hessians, which
+      violates the implicit function theorem conditions influence functions
+      require, and damping "adds hyperparameter complexity without principled
+      justification." <span class="ref"><a href="#r8">[Kreer et al.]</a></span>
+      Their remedy is to avoid inversion entirely and take a covariance under a
       localized posterior,
     </p>
-    <div class="formula" data-tex="p_{\gamma}(w \mid D, w_0) \;\propto\; \exp\!\Big(-n\beta L(w) \;-\; \tfrac{\gamma}{2}\,\lVert w - w_0\rVert^{2}\Big)"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>p</mi><mi>γ</mi></msub><mo stretchy="false">(</mo><mi>w</mi><mo>∣</mo><mi>D</mi><mo separator="true">,</mo><msub><mi>w</mi><mn>0</mn></msub><mo stretchy="false">)</mo><mtext>  </mtext><mo>∝</mo><mtext>  </mtext><mi>exp</mi><mo>⁡</mo><mtext> ⁣</mtext><mo fence="false" stretchy="true" minsize="1.8em" maxsize="1.8em">(</mo><mo>−</mo><mi>n</mi><mi>β</mi><mi>L</mi><mo stretchy="false">(</mo><mi>w</mi><mo stretchy="false">)</mo><mtext>  </mtext><mo>−</mo><mtext>  </mtext><mstyle scriptlevel="0" displaystyle="false"><mfrac><mi>γ</mi><mn>2</mn></mfrac></mstyle><mtext> </mtext><mo stretchy="false">∥</mo><mi>w</mi><mo>−</mo><msub><mi>w</mi><mn>0</mn></msub><msup><mo stretchy="false">∥</mo><mn>2</mn></msup><mo fence="false" stretchy="true" minsize="1.8em" maxsize="1.8em">)</mo></mrow><annotation encoding="application/x-tex">p_{\gamma}(w \mid D, w_0) \;\propto\; \exp\!\Big(-n\beta L(w) \;-\; \tfrac{\gamma}{2}\,\lVert w - w_0\rVert^{2}\Big)</annotation></semantics></math></div>
+    <div class="formula" data-tex="p_{\gamma}(w \mid D, w^{*}) \;\propto\; \exp\!\Big(-\sum_i \ell_i(w) \;-\; \tfrac{\gamma}{2}\,\lVert w - w^{*}\rVert^{2}\Big)"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>p</mi><mi>γ</mi></msub><mo stretchy="false">(</mo><mi>w</mi><mo>∣</mo><mi>D</mi><mo separator="true">,</mo><msup><mi>w</mi><mo lspace="0em" rspace="0em">∗</mo></msup><mo stretchy="false">)</mo><mtext>  </mtext><mo>∝</mo><mtext>  </mtext><mi>exp</mi><mo>⁡</mo><mtext> ⁣</mtext><mo fence="false" stretchy="true" minsize="1.8em" maxsize="1.8em">(</mo><mo>−</mo><munder><mo>∑</mo><mi>i</mi></munder><msub><mi mathvariant="normal">ℓ</mi><mi>i</mi></msub><mo stretchy="false">(</mo><mi>w</mi><mo stretchy="false">)</mo><mtext>  </mtext><mo>−</mo><mtext>  </mtext><mstyle scriptlevel="0" displaystyle="false"><mfrac><mi>γ</mi><mn>2</mn></mfrac></mstyle><mtext> </mtext><mo stretchy="false">∥</mo><mi>w</mi><mo>−</mo><msup><mi>w</mi><mo lspace="0em" rspace="0em">∗</mo></msup><msup><mo stretchy="false">∥</mo><mn>2</mn></msup><mo fence="false" stretchy="true" minsize="1.8em" maxsize="1.8em">)</mo></mrow><annotation encoding="application/x-tex">p_{\gamma}(w \mid D, w^{*}) \;\propto\; \exp\!\Big(-\sum_i \ell_i(w) \;-\; \tfrac{\gamma}{2}\,\lVert w - w^{*}\rVert^{2}\Big)</annotation></semantics></math></div>
     <p>
-      in which <span class="m" data-tex="\gamma"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi></mrow><annotation encoding="application/x-tex">\gamma</annotation></semantics></math></span> sets how strongly the chain
-      is held near <span class="m" data-tex="w_0"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>w</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">w_0</annotation></semantics></math></span>. In the quadratic regime
-      that estimator computes
+      which is the same localized posterior the learning coefficient estimator
+      samples from.
+    </p>
+    <div class="callout">
+      <p class="eyebrow">Localization plays the role damping played</p>
+      <p>
+        In the quadratic approximation, localization at strength
+        <span class="m" data-tex="\gamma"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi></mrow><annotation encoding="application/x-tex">\gamma</annotation></semantics></math></span> induces the same spectral shrinkage as
+        ridge damping at penalty <span class="m" data-tex="\gamma/n\beta"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mi mathvariant="normal">/</mi><mi>n</mi><mi>β</mi></mrow><annotation encoding="application/x-tex">\gamma/n\beta</annotation></semantics></math></span>. The
+        regularizer has moved from an explicit
+        <span class="m" data-tex="(H + \lambda I)^{-1}"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mi>H</mi><mo>+</mo><mi>λ</mi><mi>I</mi><msup><mo stretchy="false">)</mo><mrow><mo>−</mo><mn>1</mn></mrow></msup></mrow><annotation encoding="application/x-tex">(H + \lambda I)^{-1}</annotation></semantics></math></span> into the prior
+        term rather than gone away, and its scale still has to be chosen.
+      </p>
+    </div>
+    <p>
+      This is not an analogy. In the quadratic regime the estimator computes
     </p>
     <div class="formula" data-tex="\hat{\lambda} \;=\; \tfrac12 \sum_i \frac{h_i}{h_i + c}, \qquad c = \frac{\gamma}{n\beta}"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mover accent="true"><mi>λ</mi><mo>^</mo></mover><mtext>  </mtext><mo>=</mo><mtext>  </mtext><mstyle scriptlevel="0" displaystyle="false"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><munder><mo>∑</mo><mi>i</mi></munder><mfrac><msub><mi>h</mi><mi>i</mi></msub><mrow><msub><mi>h</mi><mi>i</mi></msub><mo>+</mo><mi>c</mi></mrow></mfrac><mo separator="true">,</mo><mspace width="2em"/><mi>c</mi><mo>=</mo><mfrac><mi>γ</mi><mrow><mi>n</mi><mi>β</mi></mrow></mfrac></mrow><annotation encoding="application/x-tex">\hat{\lambda} \;=\; \tfrac12 \sum_i \frac{h_i}{h_i + c}, \qquad c = \frac{\gamma}{n\beta}</annotation></semantics></math></div>
     <p>
-      which is the effective degrees of freedom of ridge regression at penalty
-      <span class="m" data-tex="c"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span>. The number is therefore indexed by a
-      scale the practitioner selects, and that matters here because top curvature
-      varies by about <b>400&times;</b> across these cells, from 0.82 for the NTK
-      network at width 1024 to 346 for the &micro;P network at the same width. A
-      single numerical <span class="m" data-tex="\gamma"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi></mrow><annotation encoding="application/x-tex">\gamma</annotation></semantics></math></span> sits at a different
-      point on the response curve in every one of them. My first pass held
-      <span class="m" data-tex="\gamma = 5000"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo>=</mo><mn>5000</mn></mrow><annotation encoding="application/x-tex">\gamma = 5000</annotation></semantics></math></span> fixed and reported the
-      &micro;P network 16.9&times; <em>higher</em> at width 1024, with the ordering
-      reversed.
+      and <span class="m" data-tex="\sum_i h_i/(h_i+c)"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>∑</mo><mi>i</mi></msub><msub><mi>h</mi><mi>i</mi></msub><mi mathvariant="normal">/</mi><mo stretchy="false">(</mo><msub><mi>h</mi><mi>i</mi></msub><mo>+</mo><mi>c</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\sum_i h_i/(h_i+c)</annotation></semantics></math></span> is the
+      effective degrees of freedom of ridge regression at penalty
+      <span class="m" data-tex="c"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span>, a standard quantity in classical regression
+      analysis. The learning coefficient estimate at finite
+      <span class="m" data-tex="\gamma"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi></mrow><annotation encoding="application/x-tex">\gamma</annotation></semantics></math></span> is therefore a damped-Hessian statistic,
+      the same family of object as the damped influence function, computed by a
+      different route.
     </p>
     <p>
-      Holding a dimensionless ratio fixed instead removes the dependence. Define
+      That identification is checkable. Computing
+      <span class="m" data-tex="\tfrac12\,\mathrm{tr}\!\left[H (H + cI)^{-1}\right]"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mstyle scriptlevel="0" displaystyle="false"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mtext> </mtext><mrow><mi mathvariant="normal">t</mi><mi mathvariant="normal">r</mi></mrow><mtext> ⁣</mtext><mrow><mo fence="true">[</mo><mi>H</mi><mo stretchy="false">(</mo><mi>H</mi><mo>+</mo><mi>c</mi><mi>I</mi><msup><mo stretchy="false">)</mo><mrow><mo>−</mo><mn>1</mn></mrow></msup><mo fence="true">]</mo></mrow></mrow><annotation encoding="application/x-tex">\tfrac12\,\mathrm{tr}\!\left[H (H + cI)^{-1}\right]</annotation></semantics></math></span> directly,
+      via Hutchinson probes with conjugate-gradient solves and no sampling,
+      reproduces the SGLD estimate to three significant figures on the &micro;P network
+      at width 1024: 3.80 against 3.80 at <span class="m" data-tex="\kappa = 1"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\kappa = 1</annotation></semantics></math></span>, and
+      16.14 against 16.29 at <span class="m" data-tex="\kappa = 10"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mo>=</mo><mn>10</mn></mrow><annotation encoding="application/x-tex">\kappa = 10</annotation></semantics></math></span>.
+    </p>
+  </div>
+</section>
+<!-- ============================================================ -->
+<section>
+  <div class="sec-head">
+    <h2>Why a fixed &gamma; produced the wrong ordering</h2>
+  </div>
+  <div class="col">
+    <p>
+      The convention is to calibrate the sampler's hyperparameters once per
+      experiment and hold them fixed across the family so that cells remain
+      comparable. This is sound when the family is homogeneous. Mine is not. Top
+      curvature varies by about <b>400&times;</b> across my cells, from 0.82 for
+      the NTK network at width 1024 to 346 for the &micro;P network at the same width.
+      Since a direction registers only when
+      <span class="m" data-tex="n\beta h \gg \gamma"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mi>β</mi><mi>h</mi><mo>≫</mo><mi>γ</mi></mrow><annotation encoding="application/x-tex">n\beta h \gg \gamma</annotation></semantics></math></span>, a single
+      <span class="m" data-tex="\gamma"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi></mrow><annotation encoding="application/x-tex">\gamma</annotation></semantics></math></span> occupies a different position on the
+      response curve in every cell.
+    </p>
+    <p>
+      My first pass used <span class="m" data-tex="\gamma = 5000"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo>=</mo><mn>5000</mn></mrow><annotation encoding="application/x-tex">\gamma = 5000</annotation></semantics></math></span> throughout, two
+      orders of magnitude above the range the LLC literature recommends.
+      <span class="ref"><a href="#r5">[Lau et al.]</a></span> At that setting the
+      NTK network's stiffest direction gives
+      <span class="m" data-tex="n\beta\lambda_{\max}/\gamma = 0.025"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mi>β</mi><msub><mi>λ</mi><mi>max</mi><mo>⁡</mo></msub><mi mathvariant="normal">/</mi><mi>γ</mi><mo>=</mo><mn>0.025</mn></mrow><annotation encoding="application/x-tex">n\beta\lambda_{\max}/\gamma = 0.025</annotation></semantics></math></span>, so
+      its entire spectrum sat below the damping and the estimate reported a
+      rescaled Hessian trace. The &micro;P network at the same setting sat above it.
+    </p>
+    <p>
+      A second and subtler version of the same error was also present. My sampler
+      inherited the model's parametrization, so the &micro;P network's chain used
+      <span class="m" data-tex="\varepsilon/\texttt{fan\_in}"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ε</mi><mi mathvariant="normal">/</mi><mtext mathvariant="monospace">fan_in</mtext></mrow><annotation encoding="application/x-tex">\varepsilon/\texttt{fan\_in}</annotation></semantics></math></span> on hidden weights, a
+      <b>1024&times;</b> smaller step than the NTK network's, in the layer holding
+      56% of the parameters. The localization mode relaxes in
+      <span class="m" data-tex="\tau \approx 2/(\epsilon_t \gamma)"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>τ</mi><mo>≈</mo><mn>2</mn><mi mathvariant="normal">/</mi><mo stretchy="false">(</mo><msub><mi>ϵ</mi><mi>t</mi></msub><mi>γ</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\tau \approx 2/(\epsilon_t \gamma)</annotation></semantics></math></span>
+      steps, so the two models equilibrated on timescales three orders of magnitude
+      apart, and at a shared step budget the &micro;P chains had not converged. An
+      unequilibrated chain underestimates the coefficient, inflating the gap being
+      measured.
+    </p>
+    <p>
+      Together these produced an incorrect result: the &micro;P network 16.9&times;
+      higher at width 1024, with the ordering reversed relative to the reference
+      computation.
+    </p>
+
+    <h3>A dimensionless correction</h3>
+    <p>
+      Both faults have the same structure, a quantity carrying units held
+      numerically constant across cells whose curvature is not. Holding a
+      dimensionless ratio constant instead removes both. Define
     </p>
     <div class="formula" data-tex="\kappa \;=\; \frac{n\beta\,\lambda_{\max}}{\gamma}"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>κ</mi><mtext>  </mtext><mo>=</mo><mtext>  </mtext><mfrac><mrow><mi>n</mi><mi>β</mi><mtext> </mtext><msub><mi>λ</mi><mi>max</mi><mo>⁡</mo></msub></mrow><mi>γ</mi></mfrac></mrow><annotation encoding="application/x-tex">\kappa \;=\; \frac{n\beta\,\lambda_{\max}}{\gamma}</annotation></semantics></math></div>
     <p>
-      so that every cell is read at the same position on its own response curve.
-      Every figure below reports <span class="m" data-tex="\kappa"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi></mrow><annotation encoding="application/x-tex">\kappa</annotation></semantics></math></span> rather
-      than <span class="m" data-tex="\gamma"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi></mrow><annotation encoding="application/x-tex">\gamma</annotation></semantics></math></span>, and the result is checked at
-      <span class="m" data-tex="\kappa = 1"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\kappa = 1</annotation></semantics></math></span>, 10 and 100, two decades of
-      damping. The reference values are computed directly as
-      <span class="m" data-tex="\tfrac12\,\mathrm{tr}\!\left[H (H + cI)^{-1}\right]"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mstyle scriptlevel="0" displaystyle="false"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mtext> </mtext><mrow><mi mathvariant="normal">t</mi><mi mathvariant="normal">r</mi></mrow><mtext> ⁣</mtext><mrow><mo fence="true">[</mo><mi>H</mi><mo stretchy="false">(</mo><mi>H</mi><mo>+</mo><mi>c</mi><mi>I</mi><msup><mo stretchy="false">)</mo><mrow><mo>−</mo><mn>1</mn></mrow></msup><mo fence="true">]</mo></mrow></mrow><annotation encoding="application/x-tex">\tfrac12\,\mathrm{tr}\!\left[H (H + cI)^{-1}\right]</annotation></semantics></math></span>
-      by Hutchinson probes with conjugate-gradient solves, which takes the sampler
-      out of the question altogether.
+      and set the step at a fixed fraction <span class="m" data-tex="c"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span> of the
+      explicit stability limit,
+      <span class="m" data-tex="\epsilon_t = c/(n\beta\lambda_{\max} + \gamma)"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ϵ</mi><mi>t</mi></msub><mo>=</mo><mi>c</mi><mi mathvariant="normal">/</mi><mo stretchy="false">(</mo><mi>n</mi><mi>β</mi><msub><mi>λ</mi><mi>max</mi><mo>⁡</mo></msub><mo>+</mo><mi>γ</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\epsilon_t = c/(n\beta\lambda_{\max} + \gamma)</annotation></semantics></math></span>.
+      The relaxation time is then independent of the model,
+      <span class="m" data-tex="\tau = (2/c)(\kappa+1)"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>τ</mi><mo>=</mo><mo stretchy="false">(</mo><mn>2</mn><mi mathvariant="normal">/</mi><mi>c</mi><mo stretchy="false">)</mo><mo stretchy="false">(</mo><mi>κ</mi><mo>+</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\tau = (2/c)(\kappa+1)</annotation></semantics></math></span> steps, so every cell is
+      read at the same position on its own response curve and given the same number
+      of relaxation times regardless of basin stiffness.
     </p>
-    <p class="xref">
-      The full argument, its validation against models of known RLCT, and what it
-      implies for anyone comparing learning coefficients across models are in
-      <a href="https://jrepifano.github.io/research/llc-localization-scale/">Part 2: The localization scale is part of the measurement</a>.
+    <p>
+      Before applying this to networks I checked it against a case with a known
+      answer. Linear regression is regular, with RLCT exactly
+      <span class="m" data-tex="d/2"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mi mathvariant="normal">/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">d/2</annotation></semantics></math></span>, and the protocol carries a prediction rather
+      than a fit: a quadratic direction contributes
+      <span class="m" data-tex="\tfrac12\cdot\kappa/(\kappa+1)"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mstyle scriptlevel="0" displaystyle="false"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mo>⋅</mo><mi>κ</mi><mi mathvariant="normal">/</mi><mo stretchy="false">(</mo><mi>κ</mi><mo>+</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\tfrac12\cdot\kappa/(\kappa+1)</annotation></semantics></math></span>, so with
+      <span class="m" data-tex="d \ll n"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mo>≪</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">d \ll n</annotation></semantics></math></span> the measured fraction of the true value
+      should fall on <span class="m" data-tex="\kappa/(\kappa+1)"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mi mathvariant="normal">/</mi><mo stretchy="false">(</mo><mi>κ</mi><mo>+</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\kappa/(\kappa+1)</annotation></semantics></math></span>.
     </p>
   </div>
+
+  <figure>
+    <div class="fig-head">
+      <p class="eyebrow">Figure 1 · validation</p>
+      <div class="fig-title">Recovering a known RLCT against the predicted damping bias</div>
+    </div>
+    <div class="legend" id="lg-gt"></div>
+    <div class="chart-host" id="ch-gt"></div>
+    <figcaption>
+      Four regular models, true <span class="lh">&lambda;</span> = d/2 for d = 1, 2, 5, 10, at three
+      values of <span class="m" data-tex="\kappa"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi></mrow><annotation encoding="application/x-tex">\kappa</annotation></semantics></math></span>. Mean measured/true is
+      <b>0.486 / 0.909 / 1.029</b> against a predicted
+      <b>0.500 / 0.909 / 0.990</b>, so the damping bias is analytic and known
+      rather than a quantity to be tuned away. The collapse works because a regular
+      model with <span class="m" data-tex="d \ll n"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mo>≪</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">d \ll n</annotation></semantics></math></span> has a nearly flat spectrum, and
+      trained networks do not, so this validates the machinery in a regime other
+      than the one it is applied to.
+    </figcaption>
+    <details class="tableview"><summary>Table view</summary>
+      <div class="table-scroll" id="tv-gt"></div>
+    </details>
+  </figure>
 </section>
 
 <!-- ============================================================ -->
 <section>
   <div class="sec-head">
-    <h2>Results</h2>
+    <h2>What it looks like on trained networks</h2>
   </div>
   <div class="col">
     <p>
-      With the scale fixed dimensionlessly the comparison is stable. Ratios below 1
-      indicate that the &micro;P network has the lower coefficient and is therefore the
-      more degenerate of the two.
+      Applied to the networks the protocol makes the reference computation stable
+      across two decades of damping. The sampler is a different matter, and worth
+      reporting because it is what the standard procedure returns.
     </p>
   </div>
   <figure>
     <div class="fig-head">
-      <p class="eyebrow">Figure 2 · main result</p>
-      <div class="fig-title">&micro;P over NTK, reference and sampled, across three damping scales</div>
+      <p class="eyebrow">Figure 2 · the sampler</p>
+      <div class="fig-title"><span class="lh">&lambda;&#770;</span> against &kappa;, with reference values overlaid</div>
     </div>
-    <div class="legend" id="lg-ratio"></div>
-    <div class="chart-host" id="ch-ratio"></div>
+    <div class="legend" id="lg-grid"></div>
+    <div class="chart-host" id="ch-grid"></div>
     <figcaption>
-      Filled markers are the Hessian-based ratio, hollow markers the SGLD estimate. The
-      reference ratio is 0.25 at width 1024 and stable across the tested
-      <span class="m" data-tex="\kappa"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi></mrow><annotation encoding="application/x-tex">\kappa</annotation></semantics></math></span> range (0.247 / 0.238 / 0.260 over two decades
-      of damping), narrowing monotonically with width from about 0.95 at width 64. The SGLD estimate agrees at width 64 and departs as the NTK basin
-      flattens, reversing sign at <span class="m" data-tex="\kappa = 100"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mo>=</mo><mn>100</mn></mrow><annotation encoding="application/x-tex">\kappa = 100</annotation></semantics></math></span> where the
-      reference computation shows no reversal.
+      Filled markers are SGLD estimates, open rings the Hessian-based value at the same
+      setting. At width 64 the two agree. By width 1024 the NTK network's chain
+      overshoots by roughly ninefold at <span class="m" data-tex="\kappa = 1"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\kappa = 1</annotation></semantics></math></span> and
+      leaves the basin entirely at <span class="m" data-tex="\kappa = 100"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mo>=</mo><mn>100</mn></mrow><annotation encoding="application/x-tex">\kappa = 100</annotation></semantics></math></span>, returning
+      values above the theoretical ceiling <span class="m" data-tex="d/2"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mi mathvariant="normal">/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">d/2</annotation></semantics></math></span>. The &micro;P
+      network tracks its reference value throughout. The failure is specific to flat
+      basins.
     </figcaption>
     <details class="tableview"><summary>Table view</summary>
-      <div class="table-scroll" id="tv-ratio"></div>
+      <div class="table-scroll" id="tv-grid"></div>
     </details>
   </figure>
-
   <div class="col">
     <p>
-      At width 1024 the &micro;P network is about four times more degenerate than the
-      NTK network, the gap grows with width, and the result does not depend on where
-      the damping is set. The sampled estimate agrees at width 64 and degrades as
-      the NTK basin flattens, which is a failure mode of the sampler rather than of
-      the comparison; Part 2 reports it in detail.
+      Three controls were run before attributing this to the sampler rather than to
+      the geometry. Polishing the reference point with Adam, which reduces the loss
+      by a factor of 1330, moves the estimate by under 2%, so the stationarity gap
+      is not responsible. Reducing the step size 64-fold, which takes the MALA
+      acceptance diagnostic from 0.000 into the conventionally recommended band,
+      moves it by under 3%, so discretization is not responsible either.
+      Between-chain spread flags one cell in seventeen.
     </p>
+    <div class="prose-table" id="tv-polish"></div>
+    <div class="prose-table" id="tv-eps"></div>
     <p>
-      One more question worth settling: are the two conditions read at
-      comparable points on the loss surface? At the final checkpoints they are not.
-      Subset loss is <span class="m" data-tex="1.3 \times 10^{-5}"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1.3</mn><mo>×</mo><msup><mn>10</mn><mrow><mo>−</mo><mn>5</mn></mrow></msup></mrow><annotation encoding="application/x-tex">1.3 \times 10^{-5}</annotation></semantics></math></span> for NTK at
-      width 1024 against <span class="m" data-tex="3.2 \times 10^{-3}"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>3.2</mn><mo>×</mo><msup><mn>10</mn><mrow><mo>−</mo><mn>3</mn></mrow></msup></mrow><annotation encoding="application/x-tex">3.2 \times 10^{-3}</annotation></semantics></math></span> for
-      &micro;P, a factor of 400. Rather than retrain, I scanned each saved trajectory
-      for the checkpoint nearest a common subset loss and recomputed there.
+      The MALA figures deserve their own note. At
+      <span class="m" data-tex="\kappa \le 10"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mo>≤</mo><mn>10</mn></mrow><annotation encoding="application/x-tex">\kappa \le 10</annotation></semantics></math></span> the acceptance rate at my step size
+      reads 0.000, which the standard diagnostic rejects, and reaching the
+      recommended band requires a step 64 times smaller and therefore 64 times the
+      compute for a change of under 3% in the result. Acceptance degrades with
+      dimension approximately as <span class="m" data-tex="\epsilon^{3} d"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>ϵ</mi><mn>3</mn></msup><mi>d</mi></mrow><annotation encoding="application/x-tex">\epsilon^{3} d</annotation></semantics></math></span>, and at
+      <span class="m" data-tex="d \approx 1.9\text{M}"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mo>≈</mo><mn>1.9</mn><mtext>M</mtext></mrow><annotation encoding="application/x-tex">d \approx 1.9\text{M}</annotation></semantics></math></span> it collapses at any step size that
+      mixes in reasonable time, whereas the coefficient is a scalar time-average
+      and considerably more tolerant.
     </p>
-    <div class="prose-table" id="tv-matched"></div>
-    <p>
-      The comparison survives and slightly strengthens: the ratio moves from
-      0.954 / 0.528 / 0.247 to <b>0.713 / 0.431 / 0.213</b>, and the width trend is
-      preserved, so the reference-loss gap was not driving the result. The
-      NTK-scaled width-invariance tightens too, from
-      <span class="m" data-tex="w^{0.23}"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>w</mi><mn>0.23</mn></msup></mrow><annotation encoding="application/x-tex">w^{0.23}</annotation></semantics></math></span> to
-      <span class="m" data-tex="w^{0.16}"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>w</mi><mn>0.16</mn></msup></mrow><annotation encoding="application/x-tex">w^{0.16}</annotation></semantics></math></span>.
-    </p>
+    <div class="prose-table" id="tv-mala"></div>
   </div>
 </section>
 
 <!-- ============================================================ -->
 <section>
   <div class="sec-head">
-    <h2>Discussion</h2>
+    <h2>What this means in practice</h2>
   </div>
   <div class="col">
     <p>
-      The empirical finding is modest and worth stating at its actual size. A
-      &micro;P network is a few times more degenerate than an NTK network at matched
-      width; the gap grows with width, driven by the &micro;P network rather than the
-      NTK one; and the NTK network's effective dimension is nearly width-invariant
-      because its Jacobian rank is capped by the data rather than the parameter
-      count. That last observation is the kernel limit appearing in a degeneracy
-      measure, which was the connection I set out to find, though not in the form I
-      predicted.
+      The prescription is cheap. Estimate
+      <span class="m" data-tex="\lambda_{\max}"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>λ</mi><mi>max</mi><mo>⁡</mo></msub></mrow><annotation encoding="application/x-tex">\lambda_{\max}</annotation></semantics></math></span> once per checkpoint by
+      Lanczos, set <span class="m" data-tex="\gamma = n\beta\lambda_{\max}/\kappa"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo>=</mo><mi>n</mi><mi>β</mi><msub><mi>λ</mi><mi>max</mi><mo>⁡</mo></msub><mi mathvariant="normal">/</mi><mi>κ</mi></mrow><annotation encoding="application/x-tex">\gamma = n\beta\lambda_{\max}/\kappa</annotation></semantics></math></span>
+      for a chosen <span class="m" data-tex="\kappa"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi></mrow><annotation encoding="application/x-tex">\kappa</annotation></semantics></math></span>, and set the step at a
+      fixed fraction of the stability limit. The cost is one eigensolve against a
+      sampling run that is orders of magnitude longer. Reporting
+      <span class="m" data-tex="\kappa"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi></mrow><annotation encoding="application/x-tex">\kappa</annotation></semantics></math></span> alongside
+      <span class="m" data-tex="\hat{\lambda}"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover accent="true"><mi>λ</mi><mo>^</mo></mover></mrow><annotation encoding="application/x-tex">\hat{\lambda}</annotation></semantics></math></span>, or better the response curve
+      over a couple of decades, then makes the comparison auditable by a reader.
     </p>
-    <p class="xref">
-      Getting to that comparison meant fixing the measurement first, and the fix
-      generalises past this experiment:
-      <a href="https://jrepifano.github.io/research/llc-localization-scale/">Part 2</a> gives the argument and the validation.
+    <p>
+      The asymmetry this addresses is visible in tooling. In Timaeus's
+      <span class="mono">devinterp</span>, the inverse temperature has a
+      data-derived default, <span class="mono">utils.default_nbeta</span>, which
+      returns <span class="m" data-tex="m/\log m"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mi mathvariant="normal">/</mi><mi>log</mi><mo>⁡</mo><mi>m</mi></mrow><annotation encoding="application/x-tex">m/\log m</annotation></semantics></math></span> from the batch size.
+      Localization is the parameter
+      <span class="mono">SGLD(&hellip;, localization=&gamma;)</span>, a bare number
+      defaulting to 0, with nothing tying it to the curvature of the model being
+      measured; the class docstring says plainly that choosing it "is more of an art
+      than a science." <span class="ref"><a href="#r10">[devinterp]</a></span>
+      <span class="m" data-tex="\kappa"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi></mrow><annotation encoding="application/x-tex">\kappa</annotation></semantics></math></span> is one concrete way to make part of
+      that choice mechanical: it does not say which
+      <span class="m" data-tex="\kappa"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi></mrow><annotation encoding="application/x-tex">\kappa</annotation></semantics></math></span> is right, but it does make the same
+      <span class="m" data-tex="\kappa"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi></mrow><annotation encoding="application/x-tex">\kappa</annotation></semantics></math></span> mean the same thing in two models
+      whose spectra differ.
     </p>
+    <p>
+      Where the comparison is within a single architecture, the conventional fixed
+      <span class="m" data-tex="\gamma"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi></mrow><annotation encoding="application/x-tex">\gamma</annotation></semantics></math></span> is defensible and I am not claiming
+      otherwise. Carroll et al. compare learning coefficients between two solutions
+      to argue that one is simpler, and use that ordering to explain transient
+      structure during training.
+      <span class="ref"><a href="#r9">[Carroll et al.]</a></span> That is the
+      homogeneous case. But whether two solutions have comparable curvature scales
+      is an empirical question with a cheap answer, and reporting the response curve
+      alongside the ordering would settle it rather than assume it.
+    </p>
+    <p>
+      None of this makes <span class="lh">&lambda;&#770;</span> uninformative. It does mean the number
+      obtained is indexed by a scale the practitioner selects, and that reading it
+      as an RLCT, a property of the basin alone, is not warranted at finite
+      <span class="m" data-tex="\gamma"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi></mrow><annotation encoding="application/x-tex">\gamma</annotation></semantics></math></span>.
+    </p>  </div>
+</section>
 
-    <h3>Limitations</h3>
+<!-- ============================================================ -->
+<section>
+  <div class="sec-head">
+    <h2>Limitations</h2>
+  </div>
+  <div class="col">
     <ul class="tight">
-      <li>Three seeds. Sufficient for the width-1024 direction, not for resolving
-        the roughly 25% differences at width 64.</li>
-      <li>The Hessian-based quantity is an effective dimension at a chosen damping,
-        not an RLCT, and is itself a stochastic estimate (8 probes, CG to 1e-6).</li>
-      <li>The NTK-scaled condition is not in the lazy regime at these widths
-        (linearization error 2.45 at width 1024), so this tests a point on the way
-        to the lazy limit rather than the limit itself.</li>
+      <li>The ground-truth check validates only the flat-spectrum regime. A regular
+        model with <span class="m" data-tex="d \ll n"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mo>≪</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">d \ll n</annotation></semantics></math></span> has a nearly flat
+        spectrum and trained networks do not, so it validates the machinery in a
+        regime other than the one it is applied to.</li>
+      <li>Aligning on <span class="m" data-tex="\lambda_{\max}"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>λ</mi><mi>max</mi><mo>⁡</mo></msub></mrow><annotation encoding="application/x-tex">\lambda_{\max}</annotation></semantics></math></span> is a
+        convention. It is the quantity the stability bound depends on, but
+        <span class="m" data-tex="\operatorname{tr}(H)"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">tr</mi><mo>⁡</mo><mo stretchy="false">(</mo><mi>H</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\operatorname{tr}(H)</annotation></semantics></math></span> or an effective rank
+        would align a different part of the spectrum, and I have not compared them.
+        How much the choice of dimensionless ratio matters is the obvious next
+        check.</li>
+      <li>The identification of <span class="m" data-tex="\hat{\lambda}"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover accent="true"><mi>λ</mi><mo>^</mo></mover></mrow><annotation encoding="application/x-tex">\hat{\lambda}</annotation></semantics></math></span>
+        with the ridge effective degrees of freedom is exact only in the quadratic
+        regime. Its agreement to three significant figures on a trained network is
+        evidence that the approximation is good there, not a proof that it holds
+        generally.</li>
+      <li>Everything here is one architecture on one dataset at three widths, with
+        three seeds. The argument is analytic and should transfer; the numbers are
+        not a survey.</li>
       <li><span class="m" data-tex="n = 1024"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><mn>1024</mn></mrow><annotation encoding="application/x-tex">n = 1024</annotation></semantics></math></span> with
         <span class="m" data-tex="\beta = 1/\log\, n"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>β</mi><mo>=</mo><mn>1</mn><mi mathvariant="normal">/</mi><mi>log</mi><mo>⁡</mo><mtext> </mtext><mi>n</mi></mrow><annotation encoding="application/x-tex">\beta = 1/\log\, n</annotation></semantics></math></span> gives
-        <span class="m" data-tex="n\beta \approx 148"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mi>β</mi><mo>≈</mo><mn>148</mn></mrow><annotation encoding="application/x-tex">n\beta \approx 148</annotation></semantics></math></span>, so the WBIC asymptotics are
-        not obviously in force.</li>
+        <span class="m" data-tex="n\beta \approx 148"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mi>β</mi><mo>≈</mo><mn>148</mn></mrow><annotation encoding="application/x-tex">n\beta \approx 148</annotation></semantics></math></span>, so the WBIC asymptotics
+        are not obviously in force.</li>
     </ul>
   </div>
 </section>
@@ -850,48 +848,31 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
     <h2>Future work</h2>
   </div>
   <div class="col">
-    <h3>An explicitly lazy-scaled condition</h3>
+    <h3>Bayesian influence functions at varying curvature scale</h3>
     <p>
-      The clearest gap is that the prediction being tested belongs to the lazy
-      limit and the NTK-scaled condition does not reach it. More width will not
-      close that: linearization error falls only as
-      <span class="m" data-tex="w^{0.21}"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>w</mi><mn>0.21</mn></msup></mrow><annotation encoding="application/x-tex">w^{0.21}</annotation></semantics></math></span>, which extrapolates to width
-      <span class="m" data-tex="\sim 3 \times 10^{7}"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>∼</mo><mn>3</mn><mo>×</mo><msup><mn>10</mn><mn>7</mn></msup></mrow><annotation encoding="application/x-tex">\sim 3 \times 10^{7}</annotation></semantics></math></span>. The standard
-      remedy is to scale the output by
-      <span class="m" data-tex="\alpha"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi></mrow><annotation encoding="application/x-tex">\alpha</annotation></semantics></math></span> and the learning rate by
-      <span class="m" data-tex="1/\alpha^{2}"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi mathvariant="normal">/</mi><msup><mi>α</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">1/\alpha^{2}</annotation></semantics></math></span>, which drives the
-      linearization error toward zero at fixed width.
-      <span class="ref"><a href="#r2">[Chizat et al.]</a></span> Running the same
-      measurement across a range of <span class="m" data-tex="\alpha"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi></mrow><annotation encoding="application/x-tex">\alpha</annotation></semantics></math></span> would
-      turn the regime from something inferred into something swept, and would say
-      whether the effective dimension approaches the rank ceiling
-      <span class="m" data-tex="n\cdot C"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>⋅</mo><mi>C</mi></mrow><annotation encoding="application/x-tex">n\cdot C</annotation></semantics></math></span> as the condition becomes genuinely
-      lazy. That is the experiment I would run next.
-    </p>
-    <h3>Direct measurement of the tangent kernel spectrum</h3>
-    <p>
-      The rank argument here is inferred from the Hessian rather than measured on
-      the NTK Gram matrix directly. Computing the Gram spectrum at each width and
-      confirming that its rank saturates at <span class="m" data-tex="n\cdot C"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>⋅</mo><mi>C</mi></mrow><annotation encoding="application/x-tex">n\cdot C</annotation></semantics></math></span>
-      would close that step, and would also test whether the modest spectral
-      spreading I observe (stable rank 21 to 42) reflects genuine kernel evolution
-      or residual feature movement in the nominally NTK network.
-    </p>
-    <h3>Training to matched loss</h3>
-    <p>
-      Training to matched subset loss rather than matched epoch count would remove
-      the 400&times; reference-loss difference between the two conditions outright,
-      rather than correcting for it by scanning saved trajectories as done above.
-      It is inexpensive relative to the sweeps already run.
-    </p>
-  </div>
+      The most direct continuation, and the one closest to my prior work, is to
+      apply this analysis to the Bayesian influence function.
+      <span class="ref"><a href="#r8">[Kreer et al.]</a></span> The BIF replaces
+      the inverse Hessian with a covariance under the same localized posterior,
+      <span class="m" data-tex="\mathrm{BIF}_\gamma(z_i, \varphi) = -\operatorname{Cov}_\gamma(\ell_i(w), \varphi(w))"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mrow><mi mathvariant="normal">B</mi><mi mathvariant="normal">I</mi><mi mathvariant="normal">F</mi></mrow><mi>γ</mi></msub><mo stretchy="false">(</mo><msub><mi>z</mi><mi>i</mi></msub><mo separator="true">,</mo><mi>φ</mi><mo stretchy="false">)</mo><mo>=</mo><mo>−</mo><msub><mrow><mi mathvariant="normal">Cov</mi><mo>⁡</mo></mrow><mi>γ</mi></msub><mo stretchy="false">(</mo><msub><mi mathvariant="normal">ℓ</mi><mi>i</mi></msub><mo stretchy="false">(</mo><mi>w</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><mi>φ</mi><mo stretchy="false">(</mo><mi>w</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\mathrm{BIF}_\gamma(z_i, \varphi) = -\operatorname{Cov}_\gamma(\ell_i(w), \varphi(w))</annotation></semantics></math></span>, so it
+      inherits the same <span class="m" data-tex="\gamma"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi></mrow><annotation encoding="application/x-tex">\gamma</annotation></semantics></math></span> and, I expect, the same
+      scale sensitivity. Their reported values span 300 to 10000. The natural
+      experiment is to compute BIF attributions across a family with widely varying
+      curvature, sweep <span class="m" data-tex="\kappa"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi></mrow><annotation encoding="application/x-tex">\kappa</annotation></semantics></math></span> rather than
+      <span class="m" data-tex="\gamma"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi></mrow><annotation encoding="application/x-tex">\gamma</annotation></semantics></math></span>, and ask whether attribution rankings are
+      stable under that sweep. Given that my earlier work found classical influence
+      estimates degrade with parameter count, and that the degradation was at least
+      partly attributable to validation procedure rather than method, it would be
+      useful to know whether the Bayesian formulation is genuinely scale-robust or
+      whether it relocates the same dependence.
+    </p>  </div>
 </section>
 
 <!-- ============================================================ -->
 <section>
   <div class="sec-head">
     <h2>Configuration</h2>
-    <p class="sub">Everything needed to reproduce the numbers above.</p>
+    <p class="sub">The same runs the companion post reports.</p>
   </div>
   <div class="col">
     <div class="prose-table" id="tv-config"></div>
@@ -927,20 +908,25 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
   </div>
   <div class="col">
     <ol class="refs">
-      <li id="r1"><span class="rt">Jacot, A., Gabriel, F., &amp; Hongler, C. (2018).
-        Neural Tangent Kernel: Convergence and Generalization in Neural Networks.
-        NeurIPS.</span> <span class="rv">arXiv:1806.07572</span></li>
-      <li id="r2"><span class="rt">Chizat, L., Oyallon, E., &amp; Bach, F. (2019).
-        On Lazy Training in Differentiable Programming. NeurIPS.</span>
-        <span class="rv">arXiv:1812.07956</span></li>
-      <li id="r3"><span class="rt">Yang, G., &amp; Hu, E. J. (2021). Tensor Programs
-        IV: Feature Learning in Infinite-Width Neural Networks. ICML.</span>
-        <span class="rv">arXiv:2011.14522</span></li>
-      <li id="r4"><span class="rt">Watanabe, S. (2009). Algebraic Geometry and
-        Statistical Learning Theory. Cambridge University Press.</span></li>
       <li id="r5"><span class="rt">Lau, E., et al. (2023). The Local Learning
         Coefficient: A Singularity-Aware Complexity Measure.</span>
         <span class="rv">arXiv:2308.12108</span></li>
+      <li id="r6"><span class="rt">Koh, P. W., &amp; Liang, P. (2017). Understanding
+        Black-box Predictions via Influence Functions. ICML.</span>
+        <span class="rv">arXiv:1703.04730</span></li>
+      <li id="r7"><span class="rt">Epifano, J. R., Ramachandran, R. P., Masino, A. J.,
+        &amp; Rasool, G. (2023). Revisiting the Fragility of Influence
+        Functions.</span> <span class="rv">arXiv:2303.12922</span></li>
+      <li id="r8"><span class="rt">Kreer, P. A., Wu, W., Adam, M., Furman, Z., &amp;
+        Hoogland, J. (2025). Bayesian Influence Functions for Hessian-Free Data
+        Attribution.</span> <span class="rv">arXiv:2509.26544</span></li>
+      <li id="r9"><span class="rt">Carroll, L., Hoogland, J., Farrugia-Roberts, M.,
+        &amp; Murfet, D. (2025). Dynamics of Transient Structure in In-Context
+        Linear Regression Transformers.</span>
+        <span class="rv">arXiv:2501.17745</span></li>
+      <li id="r10"><span class="rt">Timaeus. devinterp: a library for developmental
+        interpretability, v1.3.2.</span>
+        <span class="rv">github.com/timaeus-research/devinterp</span></li>
     </ol>
   </div>
 </section>
