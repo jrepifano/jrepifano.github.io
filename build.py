@@ -72,6 +72,22 @@ def shell(title, body, *, page, description=DESC, extra_head=""):
 
 
 
+
+def publications():
+    """The grouped publication list, shared by the landing page, the CV and the
+    research page. One renderer so a new paper cannot appear on two of the three."""
+    out = ""
+    for g in DATA["publications"]:
+        items = "".join(f"""
+      <div class="pub">
+        <div class="t">{esc(p['title'])}</div>
+        <div class="m"><span>{esc(p['venue'])}, {esc(p['year'])}</span>"""
+                        + (f'<a href="{p["pdf"]}">PDF</a>' if p.get("pdf") else "")
+                        + (f'<a href="{p["arxiv"]}">arXiv</a>' if p.get("arxiv") else "")
+                        + "</div>\n      </div>" for p in g["items"])
+        out += f'\n    <div class="pubgroup"><div class="g">{esc(g["group"])}</div>{items}</div>'
+    return out
+
 # --------------------------------------------------------------------- landing
 def page_index():
     d = DATA
@@ -86,16 +102,7 @@ def page_index():
       <div class="desc">{esc(r['summary'])}</div>
     </div>""" for r in d["research"])
 
-    pubs = ""
-    for g in d["publications"]:
-        items = "".join(f"""
-      <div class="pub">
-        <div class="t">{esc(p['title'])}</div>
-        <div class="m"><span>{esc(p['venue'])}, {esc(p['year'])}</span>"""
-                        + (f'<a href="{p["pdf"]}">PDF</a>' if p.get("pdf") else "")
-                        + (f'<a href="{p["arxiv"]}">arXiv</a>' if p.get("arxiv") else "")
-                        + "</div>\n      </div>" for p in g["items"])
-        pubs += f'\n    <div class="pubgroup"><div class="g">{esc(g["group"])}</div>{items}</div>'
+    pubs = publications()
 
     body = f"""<div class="rule-top"></div>
   <h1 class="sr-only">{esc(d['name'])}</h1>
@@ -182,16 +189,7 @@ def page_cv():
       <div class="desc">{esc(r['summary'])}</div>
     </div>""" for r in d["research"])
 
-    pubs = ""
-    for g in d["publications"]:
-        items = "".join(f"""
-      <div class="pub">
-        <div class="t">{esc(p['title'])}</div>
-        <div class="m"><span>{esc(p['venue'])}, {esc(p['year'])}</span>"""
-                        + (f'<a href="{p["pdf"]}">PDF</a>' if p.get("pdf") else "")
-                        + (f'<a href="{p["arxiv"]}">arXiv</a>' if p.get("arxiv") else "")
-                        + "</div>\n      </div>" for p in g["items"])
-        pubs += f'\n    <div class="pubgroup"><div class="g">{esc(g["group"])}</div>{items}</div>'
+    pubs = publications()
 
     body = f"""<div class="rule-top"></div>
   <div class="col">
@@ -232,11 +230,7 @@ def page_research():
     <h1>Research</h1>
   </div>
   <section class="block">{items}</section>
-  <section class="block">
-    <h2>Papers</h2>
-    <div class="col"><p>Peer-reviewed publications are listed on the
-    <a href="/cv/">CV</a>, with PDFs.</p></div>
-  </section>"""
+  <section class="block"><h2>Papers</h2>{publications()}</section>"""
     return shell("Research | Jacob Epifano", body, page="research",
                  description="Research notes and experiments by Jacob Epifano.")
 
