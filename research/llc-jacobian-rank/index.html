@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Jacobian rank limits the learning coefficient of a lazy network</title>
+<title>Linear does not mean regular: Jacobian rank limits the learning coefficient</title>
 <style>*{margin:0;padding:0}html{-webkit-text-size-adjust:100%}</style>
 </head>
 <body>
@@ -435,11 +435,11 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
 <header class="masthead">
   <div class="rule-top"></div>
   <p class="eyebrow">Notes · singular learning theory</p>
-  <h1>Jacobian rank limits the learning coefficient of a lazy network</h1>
+  <h1>Linear does not mean regular: Jacobian rank limits the learning coefficient</h1>
   <p class="standfirst">
-    A network in the lazy regime is linear in its parameters, but not full rank in
-    its Jacobian, so its effective dimension is capped by the data rather than the
-    parameter count and is nearly width-invariant. Under feature learning it falls
+    A network that is linear in its parameters is not thereby a regular model: its
+    Jacobian is rank-deficient, so its effective dimension is capped by the data
+    rather than the parameter count and is nearly width-invariant. Under feature learning it falls
     with width instead, making a &micro;P network about four times more degenerate
     than an NTK one at width 1024. Recovering that comparison required correcting a
     localization-scale dependence in the estimator, which is the same damping
@@ -448,7 +448,7 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
   <div class="byline">
     <span>FC / MNIST · one-hot MSE</span>
     <span>3 seeds × 3 widths × 2 parametrizations</span>
-    <span>SGLD and exact-Hessian estimates</span>
+    <span>SGLD and Hessian-based estimates</span>
   </div>
 </header>
 
@@ -504,13 +504,14 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
     </p>
 
     <p>
-      The parametrizations do produce the regimes they are supposed to. Relative
-      weight drift from initialization falls with width under NTK, from 2.49 at
-      width 64 to 0.90 at width 1024, and spreads evenly across layers (0.83, 0.96,
-      1.03), which is what a freezing kernel looks like. Under &micro;P it holds at
-      5.01 and concentrates in the input layer, 7.08 against 0.05 and 0.12 for the
-      two layers above it. So the regime labels are a measured property here rather
-      than an assumption carried over from the parametrization names.
+      The two parametrizations move the conditions in the intended directions.
+      Relative weight drift from initialization falls with width under NTK, from
+      2.49 at width 64 to 0.90 at width 1024, and spreads evenly across layers
+      (0.83, 0.96, 1.03), which is the signature of a kernel that is freezing.
+      Under &micro;P it holds at 5.01 and concentrates in the input layer, 7.08
+      against 0.05 and 0.12 for the two layers above it. Drift is only suggestive
+      though, and a direct test below shows the NTK condition does not actually
+      reach the lazy regime at these widths.
     </p>
 
     <h3>What the measurements show</h3>
@@ -521,7 +522,8 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
       also changes the mechanism behind H3.
     </p>
     <p>
-      A model that is linear in its parameters has
+      For a model exactly linear in its parameters, with Gaussian noise and a
+      realizable target, the loss is quadratic and the learning coefficient is
     </p>
     <div class="formula">&lambda; = rank(J&#8242;J) / 2</div>
     <p>
@@ -552,9 +554,41 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
       and it moves toward greater degeneracy as capacity grows.
     </p>
     <p>
-      Establishing that number required resolving a measurement problem first. The
-      standard estimator, applied with standard settings, reported the ordering
-      reversed and the magnitude inflated by more than an order of magnitude. The
+      <b>Are these conditions actually lazy and rich?</b> Relative weight drift is
+      suggestive, so I tested the defining property directly. Lazy training means
+      the first-order expansion around initialization stays accurate for the whole
+      trajectory, so I measured
+      <span class="mono">&Vert;f(w<sub>T</sub>) &minus; [f(w&#8320;) + J(w&#8320;)&Delta;w]&Vert; /
+      &Vert;f(w<sub>T</sub>) &minus; f(w&#8320;)&Vert;</span>, which is 0 for an exactly
+      linear trajectory.
+    </p>
+    <div class="prose-table" id="tv-lin"></div>
+    <p>
+      <b>The NTK-scaled condition is not in the lazy regime at these widths.</b> A
+      value above 1 means the linearization predicts the function change worse than
+      predicting no change at all. It is roughly six times closer to linear than the
+      &micro;P condition and moves the right way with width, but it is not lazy in
+      absolute terms, and the 0.90 relative drift at width 1024 already hinted at
+      that.
+    </p>
+    <p>
+      This does not affect the rank argument, which is why it is stated in terms of
+      the trained Jacobian rather than the initial one. For MSE near interpolation
+      the Gauss-Newton term dominates, so
+      <span class="mono">H &asymp; (2/n)&middot;J(w<sub>T</sub>)&#8242;J(w<sub>T</sub>)</span>
+      and <span class="mono">rank(J(w<sub>T</sub>)) &le; n&middot;C</span> whether or
+      not training was lazy, so the data-limited ceiling applies to both conditions.
+      What it does affect is vocabulary: I describe the two arms by parametrization
+      throughout and treat the lazy limit as the prediction being tested rather than
+      a regime I am operating in. Reaching it would need explicit lazy scaling
+      rather than more width, since the linearization error falls only as
+      <span class="mono">w<sup>0.21</sup></span> and extrapolates to width
+      ~3&times;10<sup>7</sup> before it becomes defensible.
+    </p>
+    <p>
+      Establishing that number required resolving a measurement problem first. My initial SGLD
+      configuration reported the ordering reversed and the magnitude inflated by
+      more than an order of magnitude. The
       cause turned out to be structurally identical to a problem I had written
       about in a different context.
     </p>
@@ -568,25 +602,28 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
   </div>
   <div class="col">
     <p>
-      The quantity plotted below is computed deterministically from the Hessian,
-      with no sampling. The next section justifies why it is the appropriate
-      quantity; here it is enough that it is exact.
+      The quantity plotted below is computed from the Hessian rather than by SGLD.
+      It is still a stochastic estimate, using 8 Hutchinson probes with
+      conjugate-gradient solves to tolerance 1e-6, so I call it the
+      Hessian-based reference estimate rather than exact; seed and probe spread
+      are reported alongside. The next section justifies why it is the
+      appropriate quantity.
     </p>
   </div>
 
   <figure>
     <div class="fig-head">
       <p class="eyebrow">Figure 1</p>
-      <div class="fig-title">Effective dimension against width, exact and sampled</div>
+      <div class="fig-title">Effective dimension against width, reference and sampled</div>
     </div>
     <div class="legend" id="lg-width"></div>
     <div class="chart-host" id="ch-width"></div>
     <figcaption>
-      Solid lines are exact, computed from the Hessian; dashed lines are the SGLD
-      estimate on the same checkpoints. The NTK network's exact value is nearly
+      Solid lines are the Hessian-based reference estimate; dashed lines are the SGLD
+      estimate on the same checkpoints. The NTK network's reference value is nearly
       width-invariant, consistent with the rank ceiling
       <span class="mono">n&middot;C = 10,240</span>. The &micro;P network falls with
-      width. The sampled estimate tracks the exact value for the &micro;P network and
+      width. The sampled estimate tracks the reference value for the &micro;P network and
       departs from it for the NTK network at large width.
     </figcaption>
     <details class="tableview"><summary>Table view</summary>
@@ -650,13 +687,14 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
       samples from.
     </p>
     <div class="callout">
-      <p class="eyebrow">The damping did not disappear</p>
+      <p class="eyebrow">Localization plays the role damping played</p>
       <p>
-        The <span class="mono">&gamma;</span> in that posterior is the damping. It
-        has moved from an explicit
+        In the quadratic approximation, localization at strength
+        <span class="mono">&gamma;</span> induces the same spectral shrinkage as
+        ridge damping at penalty <span class="mono">&gamma;/n&beta;</span>. The
+        regularizer has moved from an explicit
         <span class="mono">(H + &lambda;I)<sup>&minus;1</sup></span> into the prior
-        term, where it is no longer written beside the Hessian, but it performs the
-        same function and carries the same arbitrariness.
+        term rather than gone away, and its scale still has to be chosen.
       </p>
     </div>
     <p>
@@ -799,16 +837,15 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
   <figure>
     <div class="fig-head">
       <p class="eyebrow">Figure 3 · main result</p>
-      <div class="fig-title">&micro;P over NTK, exact and sampled, across three damping scales</div>
+      <div class="fig-title">&micro;P over NTK, reference and sampled, across three damping scales</div>
     </div>
     <div class="legend" id="lg-ratio"></div>
     <div class="chart-host" id="ch-ratio"></div>
     <figcaption>
-      Filled markers are the exact ratio, hollow markers the SGLD estimate. The
-      exact ratio is 0.25 at width 1024 and essentially independent of
-      <span class="mono">&kappa;</span> (0.247 / 0.238 / 0.260 across two decades of
-      damping), and it narrows monotonically with width from about 0.95 at width
-      64. The SGLD estimate agrees at width 64 and departs as the NTK basin
+      Filled markers are the Hessian-based ratio, hollow markers the SGLD estimate. The
+      reference ratio is 0.25 at width 1024 and stable across the tested
+      <span class="mono">&kappa;</span> range (0.247 / 0.238 / 0.260 over two decades
+      of damping), narrowing monotonically with width from about 0.95 at width 64. The SGLD estimate agrees at width 64 and departs as the NTK basin
       flattens, reversing sign at <span class="mono">&kappa;=100</span> where the
       exact computation shows no reversal.
     </figcaption>
@@ -832,17 +869,17 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
   <figure>
     <div class="fig-head">
       <p class="eyebrow">Figure 4 · the sampler</p>
-      <div class="fig-title"><span class="lh">&lambda;&#770;</span> against &kappa;, with exact values overlaid</div>
+      <div class="fig-title"><span class="lh">&lambda;&#770;</span> against &kappa;, with reference values overlaid</div>
     </div>
     <div class="legend" id="lg-grid"></div>
     <div class="chart-host" id="ch-grid"></div>
     <figcaption>
-      Filled markers are SGLD estimates, open rings the exact value at the same
+      Filled markers are SGLD estimates, open rings the Hessian-based value at the same
       setting. At width 64 the two agree. By width 1024 the NTK network's chain
       overshoots by roughly ninefold at <span class="mono">&kappa;=1</span> and
       leaves the basin entirely at <span class="mono">&kappa;=100</span>, returning
       values above the theoretical ceiling <span class="mono">d/2</span>. The &micro;P
-      network tracks its exact value throughout. The failure is specific to flat
+      network tracks its reference value throughout. The failure is specific to flat
       basins.
     </figcaption>
     <details class="tableview"><summary>Table view</summary>
@@ -874,6 +911,22 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
       and considerably more tolerant.
     </p>
     <div class="prose-table" id="tv-mala"></div>
+    <p>
+      One more question the controls should answer: are the two conditions read at
+      comparable points on the loss surface? At the final checkpoints they are not.
+      Subset loss is <span class="mono">1.3&times;10&#8315;&#8309;</span> for NTK at
+      width 1024 against <span class="mono">3.2&times;10&#8315;&sup3;</span> for
+      &micro;P, a factor of 400. Rather than retrain, I scanned each saved trajectory
+      for the checkpoint nearest a common subset loss and recomputed there.
+    </p>
+    <div class="prose-table" id="tv-matched"></div>
+    <p>
+      The comparison survives and slightly strengthens: the ratio moves from
+      0.954 / 0.528 / 0.247 to <b>0.713 / 0.431 / 0.213</b>, and the width trend is
+      preserved, so the reference-loss gap was not driving the result. The
+      NTK-scaled width-invariance tightens too, from
+      <span class="mono">w<sup>0.23</sup></span> to
+      <span class="mono">w<sup>0.16</sup></span>.
   </div>
 </section>
 
@@ -902,28 +955,25 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
       <span class="mono">&gamma;</span> numerically fixed does not hold the
       measurement fixed. Here that was sufficient to reverse the sign of the
       effect. Fixing the dimensionless ratio instead costs nothing, and where the
-      exact computation is affordable it removes the sampler from the question
-      entirely.
+      Hessian-based computation is affordable it removes the sampler from the
+      question entirely.
     </p>
 
     <h3>Limitations</h3>
     <ul class="tight">
       <li>Three seeds. Sufficient for the width-1024 direction, not for resolving
         the roughly 25% differences at width 64.</li>
-      <li>The exact quantity is an effective dimension at a chosen damping, not an
-        RLCT. The ground-truth check validates only the flat-spectrum regime, which
+      <li>The Hessian-based quantity is an effective dimension at a chosen damping,
+        not an RLCT, and is itself a stochastic estimate (8 probes, CG to 1e-6). The ground-truth check validates only the flat-spectrum regime, which
         is not the regime the networks occupy.</li>
       <li>Aligning on <span class="mono">&lambda;<sub>max</sub></span> is a
         convention. It is the quantity the stability bound depends on, but
         <span class="mono">tr(H)</span> or an effective rank would align a different
         part of the spectrum, and I have not compared them.</li>
-      <li>The two models are read at very different reference losses,
-        <span class="mono">1.3&times;10&#8315;&#8309;</span> for the NTK network at
-        width 1024 against <span class="mono">3.2&times;10&#8315;&sup3;</span> for
-        the &micro;P network. The NTK network nearly interpolates the estimation subset
-        and the &micro;P network does not, so part of the measured difference may reflect
-        that rather than basin geometry. Matching trained loss instead of epoch
-        count would resolve it.</li>
+      <li>The NTK-scaled condition is not in the lazy regime at these widths
+        (linearization error 2.45 at width 1024), so this tests a point on the way
+        to the lazy limit rather than the limit itself. An explicitly lazy-scaled
+        arm is the obvious next experiment.</li>
       <li><span class="mono">n = 1024</span> with
         <span class="mono">&beta; = 1/log n</span> gives
         <span class="mono">n&beta; &asymp; 148</span>, so the WBIC asymptotics are
@@ -985,6 +1035,24 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
       <span class="mono">tr(H)</span> and effective-rank alignment targets would
       establish how much the choice of dimensionless ratio matters. Both are
       inexpensive relative to the sweeps already run.
+    </p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section>
+  <div class="sec-head">
+    <h2>Configuration</h2>
+    <p class="sub">Everything needed to reproduce the numbers above.</p>
+  </div>
+  <div class="col">
+    <div class="prose-table" id="tv-config"></div>
+    <p style="margin-top:14px">
+      Scripts, raw results and logs live in
+      <span class="mono">docs/exp_kappa_protocol/</span> and
+      <span class="mono">docs/exp_gamma_calibration/</span> of the project
+      repository: the sweep driver, the Hessian probe, the MALA diagnostic, and the
+      linearization and matched-loss controls.
     </p>
   </div>
 </section>
@@ -1096,6 +1164,38 @@ const D = {
     {cell:"\u00b5P w=64",   k1:0.000, k10:0.000, k100:0.642},
     {cell:"\u00b5P w=1024", k1:0.000, k10:0.000, k100:0.000}
   ],
+  /* Linearisation error ||f(wT) - [f(w0)+J(w0)dw]|| / ||f(wT)-f(w0)||.
+     0 = exactly linear trajectory. Mean over 3 seeds. */
+  lin: [
+    {w:64,   ntk:4.32, mup:13.82},
+    {w:256,  ntk:3.08, mup:14.45},
+    {w:1024, ntk:2.45, mup:15.45}
+  ],
+  /* Matched reference loss: nearest checkpoint in each trajectory to a common
+     subset loss. mean +- sd over 3 seeds. */
+  matched: [
+    {w:64,   k:1,  ntk:[11.00,0.16], mup:[7.85,0.66]},
+    {w:256,  k:1,  ntk:[15.45,0.53], mup:[6.66,1.52]},
+    {w:1024, k:1,  ntk:[17.31,0.47], mup:[3.69,0.05]},
+    {w:64,   k:10, ntk:[63.87,1.39], mup:[33.82,1.96]},
+    {w:256,  k:10, ntk:[86.40,2.59], mup:[31.25,8.31]},
+    {w:1024, k:10, ntk:[92.31,1.39], mup:[15.93,0.50]}
+  ],
+  /* seed sd on the unmatched D(kappa=1), for honest error bars */
+  specSd: {"ntk":{64:0.76,256:0.46,1024:0.84},"mup":{64:0.64,256:1.50,1024:0.04}},
+  config: [
+    ["Model", "FC 784-w-w-10, ReLU, widths 64 / 256 / 1024, seeds 0-2"],
+    ["Task / loss", "MNIST, one-hot MSE, batch 128, 50 epochs (23,450 steps)"],
+    ["Parametrization", "shared init N(0, 1/sqrt(fan_in)); NTK = flat LR, muP = LR/fan_in on hidden and output"],
+    ["Training LR", "NTK 1e-3; muP base 1e-2 (mu-lr), Adam"],
+    ["Estimation subset", "first n = 1024 train samples, C = 10, so n·C = 10,240"],
+    ["Temperature", "beta = 1/log n, so n·beta = 147.73"],
+    ["Protocol", "gamma = n·beta·lam_max/kappa; eps_t = 0.5/(n·beta·lam_max + gamma)"],
+    ["SGLD", "RMSProp-preconditioned, rmsprop_eps 0.1, 4 chains/cell, >=25 tau steps, burn-in 50%"],
+    ["Hessian estimate", "Hutchinson, 8 Rademacher probes; CG 120 iters, tol 1e-6"],
+    ["lam_max", "Lanczos, 50 iterations, full reorthogonalisation"],
+    ["Rejection", "cell dropped if lambda-hat > d/2 or between-chain CV > 50%"]
+  ],
   nC: 10240,
   nbeta: 147.73
 };
@@ -1174,9 +1274,9 @@ function figWidth() {
   axisText(f,m.l-58,m.t-10,"effective dimension at κ=1",{anchor:"start",size:11,fill:cssv("--ink-2")});
 
   const series=[
-    {solid:true,  c:cssv("--s1"), lab:"NTK exact", get:w=>spec("ntk",w).D[1]},
+    {solid:true,  c:cssv("--s1"), lab:"NTK ref", get:w=>spec("ntk",w).D[1]},
     {solid:false, c:cssv("--s1"), lab:"NTK SGLD",  get:w=>{const v=gridOf("ntk",w,1); return v.length?mean(v):null;}},
-    {solid:true,  c:cssv("--s2"), lab:"µP exact",  get:w=>spec("mup",w).D[1]},
+    {solid:true,  c:cssv("--s2"), lab:"µP ref",  get:w=>spec("mup",w).D[1]},
     {solid:false, c:cssv("--s2"), lab:"µP SGLD",   get:w=>{const v=gridOf("mup",w,1); return v.length?mean(v):null;}}
   ];
   series.forEach(s=>{
@@ -1195,7 +1295,7 @@ function figWidth() {
       hit.addEventListener("mouseleave",hideTT);
       f.svg.appendChild(hit);
     });
-    // Label only the exact series inline. At w=1024 the muP exact and sampled
+    // Label only the exact series inline. At w=1024 the muP reference and sampled
     // values coincide (3.80 vs 3.80), so labelling both collides; the legend
     // carries solid-vs-dashed.
     if (s.solid) {
@@ -1206,11 +1306,11 @@ function figWidth() {
     }
   });
   legend("lg-width",[
-    {name:"exact  ½tr[H(H+cI)⁻¹]",color:cssv("--ink-2")},
+    {name:"reference ½tr[H(H+cI)⁻¹]",color:cssv("--ink-2")},
     {name:"SGLD  λ̂",color:cssv("--ink-2"),pattern:"dash"},
     {name:"NTK (lazy)",color:cssv("--s1"),shape:"dot"},
     {name:"µP (rich)",color:cssv("--s2"),shape:"dot"}]);
-  table("tv-width",["width","arm","λ_max","tr(H)","stable rank","exact D(κ=1)","SGLD λ̂(κ=1)","SGLD / exact"],
+  table("tv-width",["width","arm","λ_max","tr(H)","stable rank","ref D(κ=1)","SGLD λ̂(κ=1)","SGLD / exact"],
     D.spec.map(s=>{const v=gridOf(s.arm,s.w,1);const lam=v.length?mean(v):null;
       return [s.w,s.arm==="ntk"?"NTK":"µP",s.lam_max.toFixed(3),s.tr.toFixed(1),
         s.sr.toFixed(1),s.D[1].toFixed(2),lam?lam.toFixed(2):"n/a",
@@ -1260,9 +1360,9 @@ function figRatio() {
     f.svg.appendChild(hit);
   });
   legend("lg-ratio",[
-    {name:"exact effective dimension",color:cssv("--s3"),shape:"dot"},
+    {name:"Hessian-based estimate",color:cssv("--s3"),shape:"dot"},
     {name:"SGLD λ̂",color:cssv("--ink-3"),shape:"dot"}]);
-  table("tv-ratio",["width","κ","exact ratio","SGLD ratio"],
+  table("tv-ratio",["width","κ","reference ratio","SGLD ratio"],
     cells.map(c=>[c.w,c.k,c.exact.toFixed(3)+"×",c.sgld!=null?c.sgld.toFixed(3)+"×":"chain escaped"]));
 }
 
@@ -1310,7 +1410,7 @@ function figGrid() {
           `<div class="tt-h">w=${wd}, κ=${p[2]}</div><div class="tt-row">`+
           `<span class="tt-sw" style="background:${c}"></span>`+
           `${arm==="ntk"?"NTK":"µP"} SGLD <b>${mean(p[3]).toFixed(2)}</b></div>`+
-          `<div>exact ${spec(arm,wd).D[p[2]].toFixed(2)}</div>`));
+          `<div>reference ${spec(arm,wd).D[p[2]].toFixed(2)}</div>`));
         hit.addEventListener("mouseleave",hideTT);
         f.svg.appendChild(hit);
       });
@@ -1323,8 +1423,8 @@ function figGrid() {
   axisText(f,16,20,"λ̂",{anchor:"start",size:12,fill:cssv("--ink-2")});
   legend("lg-grid",[{name:"NTK (lazy)",color:cssv("--s1")},
                     {name:"µP (rich)",color:cssv("--s2")},
-                    {name:"open ring = exact value",color:cssv("--ink-3"),shape:"dot"}]);
-  table("tv-grid",["width","κ","NTK λ̂","NTK exact","µP λ̂","µP exact"],
+                    {name:"open ring = reference value",color:cssv("--ink-3"),shape:"dot"}]);
+  table("tv-grid",["width","κ","NTK λ̂","NTK ref","µP λ̂","µP ref"],
     D.grid.map(r=>[r.w,r.k,r.ntk.length?mean(r.ntk).toFixed(2):"escaped",
       spec("ntk",r.w).D[r.k].toFixed(2),mean(r.mup).toFixed(2),spec("mup",r.w).D[r.k].toFixed(2)]));
 }
@@ -1379,6 +1479,28 @@ function figGT() {
     .concat([["theory κ/(κ+1)","n/a"].concat(D.gt.kappas.map(k=>D.gt.theory(k).toFixed(3)))]));
 }
 
+function linTable() {
+  const t=document.getElementById("tv-lin");
+  if(t) t.innerHTML="<table><thead><tr><th>width</th><th>NTK-scaled</th>"+
+    "<th>µP-scaled</th></tr></thead><tbody>"+
+    D.lin.map(r=>`<tr><td>${r.w}</td><td>${r.ntk.toFixed(2)}</td>`+
+      `<td>${r.mup.toFixed(2)}</td></tr>`).join("")+"</tbody></table>";
+  const m=document.getElementById("tv-matched");
+  if(m) m.innerHTML="<table><thead><tr><th>width</th><th>κ</th><th>NTK</th><th>µP</th>"+
+    "<th>ratio</th><th>ratio at final ckpt</th></tr></thead><tbody>"+
+    D.matched.map(r=>{
+      const dn=spec("ntk",r.w).D[r.k], dm=spec("mup",r.w).D[r.k];
+      return `<tr><td>${r.w}</td><td>${r.k}</td>`+
+        `<td>${r.ntk[0].toFixed(2)} ± ${r.ntk[1].toFixed(2)}</td>`+
+        `<td>${r.mup[0].toFixed(2)} ± ${r.mup[1].toFixed(2)}</td>`+
+        `<td><b>${(r.mup[0]/r.ntk[0]).toFixed(3)}×</b></td>`+
+        `<td>${(dm/dn).toFixed(3)}×</td></tr>`;}).join("")+"</tbody></table>";
+  const c=document.getElementById("tv-config");
+  if(c) c.innerHTML="<table><tbody>"+
+    D.config.map(r=>`<tr><td style="white-space:nowrap">${r[0]}</td><td>${r[1]}</td></tr>`)
+      .join("")+"</tbody></table>";
+}
+
 function ctlTables() {
   const p=document.getElementById("tv-polish");
   if(p) p.innerHTML="<table><thead><tr><th>cell</th><th>κ</th><th>λ̂ raw</th>"+
@@ -1399,7 +1521,7 @@ function ctlTables() {
       `<td>${r.k10.toFixed(3)}</td><td>${r.k100.toFixed(3)}</td></tr>`).join("")+"</tbody></table>";
 }
 
-function renderAll(){ figWidth(); figRatio(); figGrid(); figGT(); ctlTables(); }
+function renderAll(){ figWidth(); figRatio(); figGrid(); figGT(); ctlTables(); linTable(); }
 renderAll();
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", renderAll);
 new MutationObserver(renderAll).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});

@@ -5,21 +5,28 @@
   "email": "jrepifano@gmail.com",
   "phone": "856-217-1256",
   "links": [
-    {"label": "github.com/jrepifano", "href": "https://github.com/jrepifano"},
-    {"label": "linkedin.com/in/jrepifano", "href": "https://linkedin.com/in/jrepifano/"},
-    {"label": "jrepifano.github.io", "href": "https://jrepifano.github.io"}
-  ],
-  "summary": "Machine learning researcher and engineer. Published work on the failure modes of influence-function interpretability and on scaling Bayesian neural networks. Now build production evaluation and observability infrastructure for LLM systems, including the measurement pipelines that distinguish real improvement from apparent improvement, and use them to drive model and prompt iteration. Independent work on singular learning theory, most recently on the conditions under which local learning coefficient estimates do and do not measure what they claim. Looking to apply evaluation and research infrastructure engineering to alignment.",
-
-  "research": [
     {
-      "title": "Jacobian rank limits the learning coefficient of a lazy network",
-      "href": "/research/llc-jacobian-rank/",
-      "date": "2026",
-      "summary": "Tested whether a network in the lazy regime looks regular under the local learning coefficient. It does not: the Jacobian rank is capped by the data rather than the parameter count, so its effective dimension is nearly width-invariant, and the rich network is the more degenerate of the two by roughly 4x at width 1024. Identifies the finite-damping estimate as the ridge effective degrees of freedom, which explains why a fixed damping scale reversed the ordering, and replaces the sampler with an exact Hessian computation that removes the scale dependence from the comparison."
+      "label": "github.com/jrepifano",
+      "href": "https://github.com/jrepifano"
+    },
+    {
+      "label": "linkedin.com/in/jrepifano",
+      "href": "https://linkedin.com/in/jrepifano/"
+    },
+    {
+      "label": "jrepifano.github.io",
+      "href": "https://jrepifano.github.io"
     }
   ],
-
+  "summary": "Machine learning researcher and engineer. Published work on the failure modes of influence-function interpretability and on scaling Bayesian neural networks. Now build production evaluation and observability infrastructure for LLM systems, including the measurement pipelines that distinguish real improvement from apparent improvement, and use them to drive model and prompt iteration. Independent work on singular learning theory, most recently on the conditions under which local learning coefficient estimates do and do not measure what they claim. Looking to apply evaluation and research infrastructure engineering to alignment.",
+  "research": [
+    {
+      "title": "Linear does not mean regular: Jacobian rank limits the learning coefficient",
+      "href": "/research/llc-jacobian-rank/",
+      "date": "2026",
+      "summary": "Tested whether a network that is linear in its parameters looks regular under the local learning coefficient. It does not: the Jacobian rank is capped by the data rather than the parameter count, so the NTK-scaled network's effective dimension is nearly width-invariant, while the muP-scaled one falls with width and ends up about 4x more degenerate at width 1024. Identifies the finite-damping estimate as the ridge effective degrees of freedom, which explains why a fixed damping scale reversed the ordering, and replaces the sampler with a Hessian-based reference computation that removes the scale dependence."
+    }
+  ],
   "experience": [
     {
       "role": "Senior Research Scientist",
@@ -89,57 +96,94 @@
       ]
     }
   ],
-
   "skills": [
-    {"label": "Evaluation and Experimentation",
-     "text": "Eval harness design, LLM-as-judge scoring, A/B prompt testing, production trace sampling, drift detection, shadow evaluation and benchmarking frameworks, observability and monitoring (Datadog)"},
-    {"label": "Research Engineering and Numerical Methods",
-     "text": "Experiments built from scratch in PyTorch; Hutchinson trace estimation, conjugate-gradient solves, Lanczos eigensolvers, SGLD sampling with mixing and acceptance diagnostics, ground-truth validation against analytic cases"},
-    {"label": "Learning Theory and Interpretability",
-     "text": "Singular learning theory and learning coefficient estimation, influence functions, Bayesian neural networks, variational inference, uncertainty quantification"},
-    {"label": "Agentic Systems and Tooling",
-     "text": "LangGraph, ReAct, LLMCompiler, MCP tool integration, multi-step planning, agentic coding workflows"},
-    {"label": "Modeling",
-     "text": "Transformers, speech-to-text and ASR pipelines, multimodal fusion, classical ML"},
-    {"label": "Technical Stack",
-     "text": "Python, SQL, PyTorch, HuggingFace Transformers, LangChain/LangGraph/LangSmith; Azure ML, AWS (Batch, Lambda, S3); CI/CD for LLM applications; vector databases (Qdrant, FAISS, Chroma, Pinecone)"},
-    {"label": "Leadership",
-     "text": "Led and mentored ML teams of up to 6 engineers; defined architecture and research direction across four shipped production systems"}
+    {
+      "label": "Evaluation and Experimentation",
+      "text": "Eval harness design, LLM-as-judge scoring, A/B prompt testing, production trace sampling, drift detection, shadow evaluation and benchmarking frameworks, observability and monitoring (Datadog)"
+    },
+    {
+      "label": "Research Engineering and Numerical Methods",
+      "text": "Experiments built from scratch in PyTorch; Hutchinson trace estimation, conjugate-gradient solves, Lanczos eigensolvers, SGLD sampling with mixing and acceptance diagnostics, ground-truth validation against analytic cases"
+    },
+    {
+      "label": "Learning Theory and Interpretability",
+      "text": "Singular learning theory and learning coefficient estimation, influence functions, Bayesian neural networks, variational inference, uncertainty quantification"
+    },
+    {
+      "label": "Agentic Systems and Tooling",
+      "text": "LangGraph, ReAct, LLMCompiler, MCP tool integration, multi-step planning, agentic coding workflows"
+    },
+    {
+      "label": "Modeling",
+      "text": "Transformers, speech-to-text and ASR pipelines, multimodal fusion, classical ML"
+    },
+    {
+      "label": "Technical Stack",
+      "text": "Python, SQL, PyTorch, HuggingFace Transformers, LangChain/LangGraph/LangSmith; Azure ML, AWS (Batch, Lambda, S3); CI/CD for LLM applications; vector databases (Qdrant, FAISS, Chroma, Pinecone)"
+    },
+    {
+      "label": "Leadership",
+      "text": "Led and mentored ML teams of up to 6 engineers; defined architecture and research direction across four shipped production systems"
+    }
   ],
-
   "education": [
-    {"degree": "Ph.D. Electrical and Computer Engineering", "org": "Rowan University", "time": "2019 - 2023"},
-    {"degree": "B.S. Electrical and Computer Engineering", "org": "Rowan University", "time": "2015 - 2019"}
+    {
+      "degree": "Ph.D. Electrical and Computer Engineering",
+      "org": "Rowan University",
+      "time": "2019 - 2023"
+    },
+    {
+      "degree": "B.S. Electrical and Computer Engineering",
+      "org": "Rowan University",
+      "time": "2015 - 2019"
+    }
   ],
-
   "publications": [
     {
       "group": "Interpretability and Learning Theory",
       "items": [
-        {"title": "Efficient Scaling of Bayesian Neural Networks",
-         "venue": "IEEE Access", "year": "2024",
-         "pdf": "/papers/Efficient_Scaling_of_Bayesian_Neural_Networks.pdf"},
-        {"title": "Revisiting the Fragility of Influence Functions",
-         "venue": "Neural Networks (Elsevier)", "year": "2023",
-         "pdf": "/papers/RevisitingFragility.pdf",
-         "arxiv": "https://arxiv.org/abs/2303.12922"}
+        {
+          "title": "Efficient Scaling of Bayesian Neural Networks",
+          "venue": "IEEE Access",
+          "year": "2024",
+          "pdf": "/papers/Efficient_Scaling_of_Bayesian_Neural_Networks.pdf"
+        },
+        {
+          "title": "Revisiting the Fragility of Influence Functions",
+          "venue": "Neural Networks (Elsevier)",
+          "year": "2023",
+          "pdf": "/papers/RevisitingFragility.pdf",
+          "arxiv": "https://arxiv.org/abs/2303.12922"
+        }
       ]
     },
     {
       "group": "Clinical Machine Learning",
       "items": [
-        {"title": "Deployment of a Robust and Explainable Mortality Prediction Model: The COVID-19 Pandemic and Beyond",
-         "venue": "Smart Health, 2(1), 14", "year": "2026",
-         "pdf": "/papers/Mortality_arxiv.pdf"},
-        {"title": "A Comparison of Feature Selection Techniques for First-day Mortality Prediction in the ICU",
-         "venue": "IEEE International Symposium on Circuits & Systems (ISCAS)", "year": "2023",
-         "pdf": "/papers/featureselection.pdf"},
-        {"title": "Towards an Explainable Mortality Prediction Tool",
-         "venue": "Machine Learning for Signal Processing (MLSP)", "year": "2020",
-         "pdf": "/papers/towards.pdf"},
-        {"title": "Machine Learning Analysis of Digital Clock Drawing Test Performance for Differential Classification of Mild Cognitive Impairment Subtypes Versus Alzheimer's Disease",
-         "venue": "Journal of the International Neuropsychological Society (JINS)", "year": "2020",
-         "pdf": "/papers/dCDTmachinelearningMCI.JINS.2020.pdf"}
+        {
+          "title": "Deployment of a Robust and Explainable Mortality Prediction Model: The COVID-19 Pandemic and Beyond",
+          "venue": "Smart Health, 2(1), 14",
+          "year": "2026",
+          "pdf": "/papers/Mortality_arxiv.pdf"
+        },
+        {
+          "title": "A Comparison of Feature Selection Techniques for First-day Mortality Prediction in the ICU",
+          "venue": "IEEE International Symposium on Circuits & Systems (ISCAS)",
+          "year": "2023",
+          "pdf": "/papers/featureselection.pdf"
+        },
+        {
+          "title": "Towards an Explainable Mortality Prediction Tool",
+          "venue": "Machine Learning for Signal Processing (MLSP)",
+          "year": "2020",
+          "pdf": "/papers/towards.pdf"
+        },
+        {
+          "title": "Machine Learning Analysis of Digital Clock Drawing Test Performance for Differential Classification of Mild Cognitive Impairment Subtypes Versus Alzheimer's Disease",
+          "venue": "Journal of the International Neuropsychological Society (JINS)",
+          "year": "2020",
+          "pdf": "/papers/dCDTmachinelearningMCI.JINS.2020.pdf"
+        }
       ]
     }
   ]

@@ -36,10 +36,10 @@
     
     <div class="entry">
       <div class="entry-head">
-        <div class="t"><a href="/research/llc-jacobian-rank/">Jacobian rank limits the learning coefficient of a lazy network</a></div>
+        <div class="t"><a href="/research/llc-jacobian-rank/">Linear does not mean regular: Jacobian rank limits the learning coefficient</a></div>
         <div class="when">2026</div>
       </div>
-      <div class="desc">Tested whether a network in the lazy regime looks regular under the local learning coefficient. It does not: the Jacobian rank is capped by the data rather than the parameter count, so its effective dimension is nearly width-invariant, and the rich network is the more degenerate of the two by roughly 4x at width 1024. Identifies the finite-damping estimate as the ridge effective degrees of freedom, which explains why a fixed damping scale reversed the ordering, and replaces the sampler with an exact Hessian computation that removes the scale dependence from the comparison.</div>
+      <div class="desc">Tested whether a network that is linear in its parameters looks regular under the local learning coefficient. It does not: the Jacobian rank is capped by the data rather than the parameter count, so the NTK-scaled network's effective dimension is nearly width-invariant, while the muP-scaled one falls with width and ends up about 4x more degenerate at width 1024. Identifies the finite-damping estimate as the ridge effective degrees of freedom, which explains why a fixed damping scale reversed the ordering, and replaces the sampler with a Hessian-based reference computation that removes the scale dependence.</div>
     </div>
   </section>
 
