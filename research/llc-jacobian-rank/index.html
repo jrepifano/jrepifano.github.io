@@ -1632,7 +1632,10 @@ addEventListener("resize", hideTT);
 (function () {
   const links = [...document.querySelectorAll(".toc a")];
   if (!links.length) return;
-  const targets = links.map(a => document.getElementById(a.hash.slice(1)));
+  const byHash = a => document.getElementById(
+    decodeURIComponent(a.hash.slice(1)));
+  const targets = links.map(byHash);
+  if (targets.some(t => !t)) console.warn("toc: unresolved anchor");
   let ticking = false;
   function mark() {
     ticking = false;

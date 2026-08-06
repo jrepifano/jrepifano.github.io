@@ -549,7 +549,7 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
   <ol>
       <li><a href="#where-this-comes-from">Where this comes from</a></li>
       <li><a href="#a-familiar-estimator-problem">A familiar estimator problem</a></li>
-      <li><a href="#why-a-fixed-γ-produced-the-wrong-ordering">Why a fixed γ produced the wrong ordering</a></li>
+      <li><a href="#why-a-fixed-produced-the-wrong-ordering">Why a fixed γ produced the wrong ordering</a></li>
       <li><a href="#what-it-looks-like-on-trained-networks">What it looks like on trained networks</a></li>
       <li><a href="#what-this-means-in-practice">What this means in practice</a></li>
       <li><a href="#limitations">Limitations</a></li>
@@ -686,7 +686,7 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
 <!-- ============================================================ -->
 <section>
   <div class="sec-head">
-    <h2 id="why-a-fixed-γ-produced-the-wrong-ordering">Why a fixed &gamma; produced the wrong ordering</h2>
+    <h2 id="why-a-fixed-produced-the-wrong-ordering">Why a fixed &gamma; produced the wrong ordering</h2>
   </div>
   <div class="col">
     <p>
@@ -1513,7 +1513,10 @@ addEventListener("resize", hideTT);
 (function () {
   const links = [...document.querySelectorAll(".toc a")];
   if (!links.length) return;
-  const targets = links.map(a => document.getElementById(a.hash.slice(1)));
+  const byHash = a => document.getElementById(
+    decodeURIComponent(a.hash.slice(1)));
+  const targets = links.map(byHash);
+  if (targets.some(t => !t)) console.warn("toc: unresolved anchor");
   let ticking = false;
   function mark() {
     ticking = false;
