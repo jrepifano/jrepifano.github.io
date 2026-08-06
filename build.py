@@ -119,7 +119,7 @@ def page_index():
   </div>
 
   <section class="block">
-    <h2>Research and writing</h2>
+    <h2>Research</h2>
     {research}
   </section>
 
@@ -206,7 +206,7 @@ def page_cv():
     </p>
   </div>
 
-  <section class="block"><h2>Research and writing</h2>{research}</section>
+  <section class="block"><h2>Research</h2>{research}</section>
   <section class="block"><h2>Experience</h2>{exp}</section>
   <section class="block"><h2>Core skills</h2>{skills}</section>
   <section class="block"><h2>Education</h2>{edu}</section>
