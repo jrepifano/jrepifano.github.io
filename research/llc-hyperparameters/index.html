@@ -589,25 +589,34 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
   </div>
   <div class="col">
     <p>
-      A companion post,
-      <span class="ref"><a href="#r11">[Linear does not mean regular]</a></span>,
-      compares two parametrizations of the same
-      network under the local learning coefficient. Getting a comparison that held
-      up took longer than running the experiment did, because my first configuration
-      reported the &micro;P network 16.9&times; <em>higher</em> at width 1024. The
-      ordering was reversed relative to the correct answer and the magnitude
-      inflated by more than an order of magnitude.
+      This post and
+      <span class="ref"><a href="#r11">[Linear does not mean regular]</a></span>
+      are two halves of one investigation. That one asks how the local learning
+      coefficient scales with width in the lazy and rich regimes; this one is
+      about why the first answer I got was backwards, and what has to be true of
+      the estimator for the second one to be believed. Either can be read first.
     </p>
     <p>
-      The cause was not a bug. It was an error in how I set one hyperparameter, of
-      the kind that survives review because the hyperparameter is conventionally
-      held fixed and rarely reported. The estimator I was using, the standard one,
-      returns a quantity indexed by a scale I had chosen without reference to the
-      models being compared.
+      My initial configuration reported the &micro;P network 16.9&times;
+      <em>higher</em> at width 1024 &mdash; the ordering reversed relative to the
+      correct answer, and the magnitude inflated by more than an order of
+      magnitude.
     </p>
     <p>
-      This post is that argument. It is structurally the same problem as damping in
-      influence functions, which is where I first met it, so it starts there.
+      That was not a bug, and I should be plain that it was not standard practice
+      either. I had set the localization strength to
+      <span class="m" data-tex="\gamma = 5000"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo>=</mo><mn>5000</mn></mrow><annotation encoding="application/x-tex">\gamma = 5000</annotation></semantics></math></span>, roughly two orders of
+      magnitude above the range the LLC literature actually recommends
+      <span class="ref"><a href="#r5">[Lau et al.]</a></span>, and I had let the
+      sampler inherit the model's own per-tensor learning-rate scaling, which
+      nobody suggests doing. Both were my choices. What makes them worth a post is
+      not that they were conventional but that neither is visible in a reported
+      result: the estimator returns a number indexed by a scale the practitioner
+      picks, and that scale is rarely written down.
+    </p>
+    <p>
+      It is structurally the same problem as damping in influence functions, which
+      is where I first met it, so the argument starts there.
     </p>
   </div>
 </section>
@@ -910,7 +919,16 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
       obtained is indexed by a scale the practitioner selects, and that reading it
       as an RLCT, a property of the basin alone, is not warranted at finite
       <span class="m" data-tex="\gamma"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi></mrow><annotation encoding="application/x-tex">\gamma</annotation></semantics></math></span>.
-    </p>  </div>
+    </p>
+    <p>
+      The result this was built for is in the other half of the investigation:
+      whether a network that is linear in its parameters looks regular under the
+      LLC, measured across width in both regimes. Under the calibration above it
+      does not, and the reason is that its Jacobian rank is capped by the dataset
+      rather than by the parameter count.
+      <span class="ref"><a href="#r11">[Linear does not mean regular]</a></span>
+    </p>
+  </div>
 </section>
 
 <!-- ============================================================ -->

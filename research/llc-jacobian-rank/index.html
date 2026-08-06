@@ -611,6 +611,15 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
       regular by this measure and a rich one should look singular. My hypotheses
       going in were:
     </p>
+    <p class="xref">
+      This post and
+      <span class="ref"><a href="#r10">[LLC estimates are only as good as their hyperparameters]</a></span>
+      are two halves of one investigation. This one is the experiment and its
+      result; that one is about the estimator, and about why my first answer to
+      this question came out backwards. Either can be read first, and the part of
+      the estimator argument needed to read the results below is summarised here
+      in its own section.
+    </p>
     <ul class="tight">
       <li><b>H1.</b> The NTK network sits at or near <span class="m" data-tex="d/2"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mi mathvariant="normal">/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">d/2</annotation></semantics></math></span>,
         so the LLC grows roughly in proportion to parameter count.</li>
@@ -782,12 +791,27 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
   </div>
   <div class="col">
     <p>
-      The quantity plotted below is computed from the Hessian rather than by SGLD.
-      It is still a stochastic estimate, using 8 Hutchinson probes with
-      conjugate-gradient solves to tolerance 1e-6, so I call it the
-      Hessian-based reference estimate rather than exact; seed and probe spread
-      are reported alongside. The next section justifies why it is the
-      appropriate quantity.
+      Before the numbers, what is being plotted. It is not the RLCT, and it is not
+      an LLC in the asymptotic sense. It is the <b>effective dimension at finite
+      localization</b>: the quantity a localized estimator actually returns when
+      the spring holding it near the trained weights has a finite stiffness
+      <span class="m" data-tex="\gamma"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi></mrow><annotation encoding="application/x-tex">\gamma</annotation></semantics></math></span>, which in the quadratic regime is
+    </p>
+    <div class="formula" data-tex="\tfrac12 \sum_i \frac{h_i}{h_i + c}, \qquad c = \frac{\gamma}{n\beta}"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mstyle scriptlevel="0" displaystyle="false"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><munder><mo>∑</mo><mi>i</mi></munder><mfrac><msub><mi>h</mi><mi>i</mi></msub><mrow><msub><mi>h</mi><mi>i</mi></msub><mo>+</mo><mi>c</mi></mrow></mfrac><mo separator="true">,</mo><mspace width="2em"/><mi>c</mi><mo>=</mo><mfrac><mi>γ</mi><mrow><mi>n</mi><mi>β</mi></mrow></mfrac></mrow><annotation encoding="application/x-tex">\tfrac12 \sum_i \frac{h_i}{h_i + c}, \qquad c = \frac{\gamma}{n\beta}</annotation></semantics></math></div>
+    <p>
+      a curvature-weighted count of directions rather than a count of all of them.
+      Only as <span class="m" data-tex="\gamma \to 0"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo>→</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\gamma \to 0</annotation></semantics></math></span> does it approach
+      <span class="m" data-tex="\tfrac12 \operatorname{rank}(H)"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mstyle scriptlevel="0" displaystyle="false"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mi mathvariant="normal">rank</mi><mo>⁡</mo><mo stretchy="false">(</mo><mi>H</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\tfrac12 \operatorname{rank}(H)</annotation></semantics></math></span>. The next
+      section explains where that expression comes from and how the scale is
+      chosen; the point here is that every number below carries that qualification,
+      and I report it at three settings spanning two decades so the reader can see
+      what depends on the choice.
+    </p>
+    <p>
+      It is computed from the Hessian rather than by SGLD, but it is still a
+      stochastic estimate &mdash; 8 Hutchinson probes with conjugate-gradient
+      solves to tolerance 1e-6 &mdash; so I call it the Hessian-based reference
+      estimate rather than exact, and report seed and probe spread alongside.
     </p>
   </div>
 
@@ -1061,6 +1085,16 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
       inferred into something manipulated, and would say whether the LLC approaches
       the rank ceiling <span class="m" data-tex="n\cdot C"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>⋅</mo><mi>C</mi></mrow><annotation encoding="application/x-tex">n\cdot C</annotation></semantics></math></span> as the condition
       becomes genuinely lazy. That is the experiment I would run next.
+    </p>
+    <p>
+      The other half of this investigation is about the measurement rather than the
+      result. Every number above is an effective dimension at a chosen localization,
+      and my first attempt at this comparison came out with the ordering reversed
+      because that scale was held numerically fixed across models whose curvature
+      differs by 400&times;. Why that happens, why the residual bias is predictable
+      rather than something to tune away, and what it implies for anyone comparing
+      LLCs across models are in
+      <span class="ref"><a href="#r10">[LLC estimates are only as good as their hyperparameters]</a></span>.
     </p>
 
     <h3>Limitations</h3>
