@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jacob Epifano</title>
+<meta name="description" content="Jacob Epifano, machine learning researcher and engineer. Evaluation infrastructure for LLM systems, singular learning theory, influence functions and interpretability.">
+<meta name="author" content="Jacob Epifano">
+<meta property="og:title" content="Jacob Epifano">
+<meta property="og:description" content="Jacob Epifano, machine learning researcher and engineer. Evaluation infrastructure for LLM systems, singular learning theory, influence functions and interpretability.">
+<meta property="og:type" content="website">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<nav class="nav">
+  <a class="home" href="/">Jacob Epifano</a>
+  <span class="links"><a href="/research/">Research</a><a href="/cv/">CV</a><a href="https://github.com/jrepifano">GitHub</a></span>
+</nav>
+<div class="wrap">
+<div class="rule-top"></div>
+  <div class="col">
+    <h1>Jacob Epifano, Ph.D.</h1>
+    <p class="lede">Machine learning researcher and engineer. Published work on the failure modes of influence-function interpretability and on scaling Bayesian neural networks. Now build production evaluation and observability infrastructure for LLM systems, including the measurement pipelines that distinguish real improvement from apparent improvement, and use them to drive model and prompt iteration. Independent work on singular learning theory, most recently on the conditions under which local learning coefficient estimates do and do not measure what they claim. Looking to apply evaluation and research infrastructure engineering to alignment.</p>
+    <div class="contact-row">
+      <a href="mailto:jrepifano@gmail.com">jrepifano@gmail.com</a><a href="https://github.com/jrepifano">github.com/jrepifano</a> <a href="https://linkedin.com/in/jrepifano/">linkedin.com/in/jrepifano</a> <a href="https://jrepifano.github.io">jrepifano.github.io</a>
+      <span>Philadelphia, PA</span>
+    </div>
+  </div>
+
+  <section class="block">
+    <h2>Research and writing</h2>
+    
+    <div class="entry">
+      <div class="entry-head">
+        <div class="t"><a href="/research/llc-jacobian-rank/">Jacobian rank limits the learning coefficient of a lazy network</a></div>
+        <div class="when">2026</div>
+      </div>
+      <div class="desc">Tested whether a network in the lazy regime looks regular under the local learning coefficient. It does not: the Jacobian rank is capped by the data rather than the parameter count, so its effective dimension is nearly width-invariant, and the rich network is the more degenerate of the two by roughly 4x at width 1024. Identifies the finite-damping estimate as the ridge effective degrees of freedom, which explains why a fixed damping scale reversed the ordering, and replaces the sampler with an exact Hessian computation that removes the scale dependence from the comparison.</div>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2>Publications</h2>
+    
+    <div class="pubgroup"><div class="g">Interpretability and Learning Theory</div>
+      <div class="pub">
+        <div class="t">Efficient Scaling of Bayesian Neural Networks</div>
+        <div class="m"><span>IEEE Access, 2024</span><a href="/papers/Efficient_Scaling_of_Bayesian_Neural_Networks.pdf">PDF</a></div>
+      </div>
+      <div class="pub">
+        <div class="t">Revisiting the Fragility of Influence Functions</div>
+        <div class="m"><span>Neural Networks (Elsevier), 2023</span><a href="/papers/RevisitingFragility.pdf">PDF</a><a href="https://arxiv.org/abs/2303.12922">arXiv</a></div>
+      </div></div>
+    <div class="pubgroup"><div class="g">Clinical Machine Learning</div>
+      <div class="pub">
+        <div class="t">Deployment of a Robust and Explainable Mortality Prediction Model: The COVID-19 Pandemic and Beyond</div>
+        <div class="m"><span>Smart Health, 2(1), 14, 2026</span><a href="/papers/Mortality_arxiv.pdf">PDF</a></div>
+      </div>
+      <div class="pub">
+        <div class="t">A Comparison of Feature Selection Techniques for First-day Mortality Prediction in the ICU</div>
+        <div class="m"><span>IEEE International Symposium on Circuits &amp; Systems (ISCAS), 2023</span><a href="/papers/featureselection.pdf">PDF</a></div>
+      </div>
+      <div class="pub">
+        <div class="t">Towards an Explainable Mortality Prediction Tool</div>
+        <div class="m"><span>Machine Learning for Signal Processing (MLSP), 2020</span><a href="/papers/towards.pdf">PDF</a></div>
+      </div>
+      <div class="pub">
+        <div class="t">Machine Learning Analysis of Digital Clock Drawing Test Performance for Differential Classification of Mild Cognitive Impairment Subtypes Versus Alzheimer's Disease</div>
+        <div class="m"><span>Journal of the International Neuropsychological Society (JINS), 2020</span><a href="/papers/dCDTmachinelearningMCI.JINS.2020.pdf">PDF</a></div>
+      </div></div>
+  </section>
+
+  <section class="block">
+    <h2>Currently</h2>
+    <div class="col">
+      <p>Senior Research Scientist at Sirona Medical, building evaluation
+      and observability infrastructure for production LLM systems. Full history on
+      the <a href="/cv/">CV</a>.</p>
+    </div>
+  </section>
+</div>
+<footer class="site">
+  <span>Jacob Epifano</span>
+  <a href="mailto:jrepifano@gmail.com">jrepifano@gmail.com</a>
+  <a href="https://github.com/jrepifano">GitHub</a>
+  <a href="https://linkedin.com/in/jrepifano/">LinkedIn</a>
+  <span style="margin-left:auto">Built with a 200-line Python script. No trackers.</span>
+</footer>
+</body>
+</html>

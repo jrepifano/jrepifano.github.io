@@ -1,0 +1,146 @@
+{
+  "name": "Jacob Epifano, Ph.D.",
+  "title": "Senior Research Scientist",
+  "location": "Philadelphia, PA",
+  "email": "jrepifano@gmail.com",
+  "phone": "856-217-1256",
+  "links": [
+    {"label": "github.com/jrepifano", "href": "https://github.com/jrepifano"},
+    {"label": "linkedin.com/in/jrepifano", "href": "https://linkedin.com/in/jrepifano/"},
+    {"label": "jrepifano.github.io", "href": "https://jrepifano.github.io"}
+  ],
+  "summary": "Machine learning researcher and engineer. Published work on the failure modes of influence-function interpretability and on scaling Bayesian neural networks. Now build production evaluation and observability infrastructure for LLM systems, including the measurement pipelines that distinguish real improvement from apparent improvement, and use them to drive model and prompt iteration. Independent work on singular learning theory, most recently on the conditions under which local learning coefficient estimates do and do not measure what they claim. Looking to apply evaluation and research infrastructure engineering to alignment.",
+
+  "research": [
+    {
+      "title": "Jacobian rank limits the learning coefficient of a lazy network",
+      "href": "/research/llc-jacobian-rank/",
+      "date": "2026",
+      "summary": "Tested whether a network in the lazy regime looks regular under the local learning coefficient. It does not: the Jacobian rank is capped by the data rather than the parameter count, so its effective dimension is nearly width-invariant, and the rich network is the more degenerate of the two by roughly 4x at width 1024. Identifies the finite-damping estimate as the ridge effective degrees of freedom, which explains why a fixed damping scale reversed the ordering, and replaces the sampler with an exact Hessian computation that removes the scale dependence from the comparison."
+    }
+  ],
+
+  "experience": [
+    {
+      "role": "Senior Research Scientist",
+      "org": "Sirona Medical",
+      "time": "Oct 2025 - Present",
+      "groups": [
+        {
+          "label": "Evaluation and measurement infrastructure",
+          "bullets": [
+            "Led the migration of the production ASR provider and built provider trialing, evaluation, and management directly into the application. Converted the incumbent single-vendor transcription service into a multiplexer that runs several providers against the same audio and returns shadow results, making head-to-head comparison of latency and WER possible on live production traffic rather than offline samples. Cut word-by-word latency by 50% and reduced WER by 20%.",
+            "Designed and shipped end-to-end evaluation infrastructure covering every production AI feature: LLM-as-judge scoring, continuous sampling of production traces, and direct dev-to-prod comparison. Validated in production, with judge metrics tracking dev eval scores and no significant drift.",
+            "Introduced a hallucination-detection metric into the evaluation pipeline and used it as the optimization target for prompt and model iteration; auto-impression hallucination rate fell from 25% to 9%.",
+            "Led an observability program consolidating evaluation, monitoring, and usage tracking across all AI features, enabling apples-to-apples comparison of foundation models and prompts on fixed datasets, turning model selection into a measured decision rather than a judgment call and accelerating release cadence.",
+            "Prototyped and benchmarked three ASR accuracy-improvement approaches against the same evaluation harness on proprietary medical datasets (denoising BERT, GPT-style post-correction, classical language-model rescoring).",
+            "Built Datadog dashboards tracking AI output quality and aggregate feature usage, giving the team its first real-time view of production model behavior."
+          ]
+        },
+        {
+          "label": "Systems and agentic infrastructure",
+          "bullets": [
+            "Cut auto-impression inference latency ~87% at p50 (8.0s to 1.0s) and ~61% at p95 (15.6s to 6.09s) through prompt and model optimization.",
+            "Shipped cross-stack contributions spanning frontend, LLM inference infrastructure (llm-plex), ASR infrastructure (asr-plex), and agentic services (rhino-api).",
+            "Stood up Epic EHR sandbox integration with an internal agent, validating APIs and mapping accessible data to expand the agent's tool surface; scoped a second integration against Cerner."
+          ]
+        }
+      ]
+    },
+    {
+      "role": "Senior Machine Learning Scientist",
+      "org": "Altea Healthcare",
+      "time": "Sep 2024 - Oct 2025",
+      "bullets": [
+        "Led a team of 6 ML engineers across four production generative AI systems, defining architecture and product direction while remaining hands-on.",
+        "Built a medical information retrieval agent on LangGraph orchestration with LangSmith evaluation and RAG over vector databases; 3.5x improvement in customer satisfaction and 2x usage growth over the prior version.",
+        "Established end-to-end Azure MLOps: CI/CD, model monitoring, and A/B prompt testing for compliant, repeatable deployment.",
+        "Built a transformer speech-to-text and LLM structured-generation pipeline producing encounter documentation, reducing encounter duration by 50%.",
+        "Built a real-time note classifier (embeddings + transformer heads) surfacing critical patient conditions, and an automated RAG ingestion pipeline over patient documents."
+      ]
+    },
+    {
+      "role": "Advanced Machine Learning Engineer",
+      "org": "CACI Inc.",
+      "time": "May 2023 - Sep 2024",
+      "bullets": [
+        "Collaborated on research in deepfake detection and AI-generated-text detection supporting trust and safety initiatives.",
+        "Built and productionized variational autoencoder models for anomaly detection in network traffic, improving detection accuracy while reducing false positives.",
+        "Designed and deployed an LLM-based RAG pipeline for automated sanitization of sensitive documents, cutting manual review time by more than 70%."
+      ]
+    },
+    {
+      "role": "Senior Data Scientist",
+      "org": "AiCure",
+      "time": "Nov 2021 - May 2023",
+      "bullets": [
+        "Introduced a cross-attention transformer architecture fusing audio, video, and text for clinical endpoint prediction.",
+        "Built a multi-model feature extraction pipeline on AWS Batch for large-scale audio and video processing, reducing processing time by more than 50%.",
+        "Designed an automated data quality assessment pipeline that filtered raw clinical media before modeling, reducing downstream model error by 25%."
+      ]
+    },
+    {
+      "role": "Student Informatics Assistant II",
+      "org": "Children's Hospital of Philadelphia",
+      "time": "Nov 2018 - Jun 2021",
+      "bullets": [
+        "Implemented influence functions in PyTorch for model interpretability and stability analysis; this became Revisiting the Fragility of Influence Functions.",
+        "Built and validated an ICU early-warning system predicting mortality risk from patient vital signs, and a pipeline for early detection of acute respiratory distress events in children."
+      ]
+    }
+  ],
+
+  "skills": [
+    {"label": "Evaluation and Experimentation",
+     "text": "Eval harness design, LLM-as-judge scoring, A/B prompt testing, production trace sampling, drift detection, shadow evaluation and benchmarking frameworks, observability and monitoring (Datadog)"},
+    {"label": "Research Engineering and Numerical Methods",
+     "text": "Experiments built from scratch in PyTorch; Hutchinson trace estimation, conjugate-gradient solves, Lanczos eigensolvers, SGLD sampling with mixing and acceptance diagnostics, ground-truth validation against analytic cases"},
+    {"label": "Learning Theory and Interpretability",
+     "text": "Singular learning theory and learning coefficient estimation, influence functions, Bayesian neural networks, variational inference, uncertainty quantification"},
+    {"label": "Agentic Systems and Tooling",
+     "text": "LangGraph, ReAct, LLMCompiler, MCP tool integration, multi-step planning, agentic coding workflows"},
+    {"label": "Modeling",
+     "text": "Transformers, speech-to-text and ASR pipelines, multimodal fusion, classical ML"},
+    {"label": "Technical Stack",
+     "text": "Python, SQL, PyTorch, HuggingFace Transformers, LangChain/LangGraph/LangSmith; Azure ML, AWS (Batch, Lambda, S3); CI/CD for LLM applications; vector databases (Qdrant, FAISS, Chroma, Pinecone)"},
+    {"label": "Leadership",
+     "text": "Led and mentored ML teams of up to 6 engineers; defined architecture and research direction across four shipped production systems"}
+  ],
+
+  "education": [
+    {"degree": "Ph.D. Electrical and Computer Engineering", "org": "Rowan University", "time": "2019 - 2023"},
+    {"degree": "B.S. Electrical and Computer Engineering", "org": "Rowan University", "time": "2015 - 2019"}
+  ],
+
+  "publications": [
+    {
+      "group": "Interpretability and Learning Theory",
+      "items": [
+        {"title": "Efficient Scaling of Bayesian Neural Networks",
+         "venue": "IEEE Access", "year": "2024",
+         "pdf": "/papers/Efficient_Scaling_of_Bayesian_Neural_Networks.pdf"},
+        {"title": "Revisiting the Fragility of Influence Functions",
+         "venue": "Neural Networks (Elsevier)", "year": "2023",
+         "pdf": "/papers/RevisitingFragility.pdf",
+         "arxiv": "https://arxiv.org/abs/2303.12922"}
+      ]
+    },
+    {
+      "group": "Clinical Machine Learning",
+      "items": [
+        {"title": "Deployment of a Robust and Explainable Mortality Prediction Model: The COVID-19 Pandemic and Beyond",
+         "venue": "Smart Health, 2(1), 14", "year": "2026",
+         "pdf": "/papers/Mortality_arxiv.pdf"},
+        {"title": "A Comparison of Feature Selection Techniques for First-day Mortality Prediction in the ICU",
+         "venue": "IEEE International Symposium on Circuits & Systems (ISCAS)", "year": "2023",
+         "pdf": "/papers/featureselection.pdf"},
+        {"title": "Towards an Explainable Mortality Prediction Tool",
+         "venue": "Machine Learning for Signal Processing (MLSP)", "year": "2020",
+         "pdf": "/papers/towards.pdf"},
+        {"title": "Machine Learning Analysis of Digital Clock Drawing Test Performance for Differential Classification of Mild Cognitive Impairment Subtypes Versus Alzheimer's Disease",
+         "venue": "Journal of the International Neuropsychological Society (JINS)", "year": "2020",
+         "pdf": "/papers/dCDTmachinelearningMCI.JINS.2020.pdf"}
+      ]
+    }
+  ]
+}

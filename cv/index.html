@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CV | Jacob Epifano, Ph.D.</title>
+<meta name="description" content="Curriculum vitae of Jacob Epifano, Ph.D.">
+<meta name="author" content="Jacob Epifano">
+<meta property="og:title" content="CV | Jacob Epifano, Ph.D.">
+<meta property="og:description" content="Curriculum vitae of Jacob Epifano, Ph.D.">
+<meta property="og:type" content="website">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<nav class="nav">
+  <a class="home" href="/">Jacob Epifano</a>
+  <span class="links"><a href="/research/">Research</a><a href="/cv/" aria-current="page">CV</a><a href="https://github.com/jrepifano">GitHub</a></span>
+</nav>
+<div class="wrap">
+<div class="rule-top"></div>
+  <div class="col">
+    <h1>Jacob Epifano, Ph.D.</h1>
+    <p class="eyebrow" style="margin-top:8px">Senior Research Scientist</p>
+    <p class="lede">Machine learning researcher and engineer. Published work on the failure modes of influence-function interpretability and on scaling Bayesian neural networks. Now build production evaluation and observability infrastructure for LLM systems, including the measurement pipelines that distinguish real improvement from apparent improvement, and use them to drive model and prompt iteration. Independent work on singular learning theory, most recently on the conditions under which local learning coefficient estimates do and do not measure what they claim. Looking to apply evaluation and research infrastructure engineering to alignment.</p>
+    <div class="contact-row">
+      <a href="mailto:jrepifano@gmail.com">jrepifano@gmail.com</a>
+      <span>856-217-1256</span><a href="https://github.com/jrepifano">github.com/jrepifano</a> <a href="https://linkedin.com/in/jrepifano/">linkedin.com/in/jrepifano</a> <a href="https://jrepifano.github.io">jrepifano.github.io</a>
+      <span>Philadelphia, PA</span>
+    </div>
+    <p class="no-print" style="margin-top:18px;font-family:var(--font-mono);font-size:.74rem;color:var(--ink-3)">
+      Print this page for a PDF copy.
+    </p>
+  </div>
+
+  <section class="block"><h2>Research and writing</h2>
+    <div class="entry">
+      <div class="entry-head">
+        <div class="t"><a href="/research/llc-jacobian-rank/">Jacobian rank limits the learning coefficient of a lazy network</a></div>
+        <div class="when">2026</div>
+      </div>
+      <div class="desc">Tested whether a network in the lazy regime looks regular under the local learning coefficient. It does not: the Jacobian rank is capped by the data rather than the parameter count, so its effective dimension is nearly width-invariant, and the rich network is the more degenerate of the two by roughly 4x at width 1024. Identifies the finite-damping estimate as the ridge effective degrees of freedom, which explains why a fixed damping scale reversed the ordering, and replaces the sampler with an exact Hessian computation that removes the scale dependence from the comparison.</div>
+    </div></section>
+  <section class="block"><h2>Experience</h2>
+    <div class="entry">
+      <div class="entry-head">
+        <div class="t">Senior Research Scientist</div>
+        <div class="when">Oct 2025 - Present</div>
+      </div>
+      <div class="org">Sirona Medical</div>
+      <div class="sub">Evaluation and measurement infrastructure</div><ul><li>Led the migration of the production ASR provider and built provider trialing, evaluation, and management directly into the application. Converted the incumbent single-vendor transcription service into a multiplexer that runs several providers against the same audio and returns shadow results, making head-to-head comparison of latency and WER possible on live production traffic rather than offline samples. Cut word-by-word latency by 50% and reduced WER by 20%.</li><li>Designed and shipped end-to-end evaluation infrastructure covering every production AI feature: LLM-as-judge scoring, continuous sampling of production traces, and direct dev-to-prod comparison. Validated in production, with judge metrics tracking dev eval scores and no significant drift.</li><li>Introduced a hallucination-detection metric into the evaluation pipeline and used it as the optimization target for prompt and model iteration; auto-impression hallucination rate fell from 25% to 9%.</li><li>Led an observability program consolidating evaluation, monitoring, and usage tracking across all AI features, enabling apples-to-apples comparison of foundation models and prompts on fixed datasets, turning model selection into a measured decision rather than a judgment call and accelerating release cadence.</li><li>Prototyped and benchmarked three ASR accuracy-improvement approaches against the same evaluation harness on proprietary medical datasets (denoising BERT, GPT-style post-correction, classical language-model rescoring).</li><li>Built Datadog dashboards tracking AI output quality and aggregate feature usage, giving the team its first real-time view of production model behavior.</li></ul><div class="sub">Systems and agentic infrastructure</div><ul><li>Cut auto-impression inference latency ~87% at p50 (8.0s to 1.0s) and ~61% at p95 (15.6s to 6.09s) through prompt and model optimization.</li><li>Shipped cross-stack contributions spanning frontend, LLM inference infrastructure (llm-plex), ASR infrastructure (asr-plex), and agentic services (rhino-api).</li><li>Stood up Epic EHR sandbox integration with an internal agent, validating APIs and mapping accessible data to expand the agent's tool surface; scoped a second integration against Cerner.</li></ul>
+    </div>
+    <div class="entry">
+      <div class="entry-head">
+        <div class="t">Senior Machine Learning Scientist</div>
+        <div class="when">Sep 2024 - Oct 2025</div>
+      </div>
+      <div class="org">Altea Healthcare</div>
+      <ul><li>Led a team of 6 ML engineers across four production generative AI systems, defining architecture and product direction while remaining hands-on.</li><li>Built a medical information retrieval agent on LangGraph orchestration with LangSmith evaluation and RAG over vector databases; 3.5x improvement in customer satisfaction and 2x usage growth over the prior version.</li><li>Established end-to-end Azure MLOps: CI/CD, model monitoring, and A/B prompt testing for compliant, repeatable deployment.</li><li>Built a transformer speech-to-text and LLM structured-generation pipeline producing encounter documentation, reducing encounter duration by 50%.</li><li>Built a real-time note classifier (embeddings + transformer heads) surfacing critical patient conditions, and an automated RAG ingestion pipeline over patient documents.</li></ul>
+    </div>
+    <div class="entry">
+      <div class="entry-head">
+        <div class="t">Advanced Machine Learning Engineer</div>
+        <div class="when">May 2023 - Sep 2024</div>
+      </div>
+      <div class="org">CACI Inc.</div>
+      <ul><li>Collaborated on research in deepfake detection and AI-generated-text detection supporting trust and safety initiatives.</li><li>Built and productionized variational autoencoder models for anomaly detection in network traffic, improving detection accuracy while reducing false positives.</li><li>Designed and deployed an LLM-based RAG pipeline for automated sanitization of sensitive documents, cutting manual review time by more than 70%.</li></ul>
+    </div>
+    <div class="entry">
+      <div class="entry-head">
+        <div class="t">Senior Data Scientist</div>
+        <div class="when">Nov 2021 - May 2023</div>
+      </div>
+      <div class="org">AiCure</div>
+      <ul><li>Introduced a cross-attention transformer architecture fusing audio, video, and text for clinical endpoint prediction.</li><li>Built a multi-model feature extraction pipeline on AWS Batch for large-scale audio and video processing, reducing processing time by more than 50%.</li><li>Designed an automated data quality assessment pipeline that filtered raw clinical media before modeling, reducing downstream model error by 25%.</li></ul>
+    </div>
+    <div class="entry">
+      <div class="entry-head">
+        <div class="t">Student Informatics Assistant II</div>
+        <div class="when">Nov 2018 - Jun 2021</div>
+      </div>
+      <div class="org">Children's Hospital of Philadelphia</div>
+      <ul><li>Implemented influence functions in PyTorch for model interpretability and stability analysis; this became Revisiting the Fragility of Influence Functions.</li><li>Built and validated an ICU early-warning system predicting mortality risk from patient vital signs, and a pipeline for early detection of acute respiratory distress events in children.</li></ul>
+    </div></section>
+  <section class="block"><h2>Core skills</h2>
+    <div class="skill">
+      <div class="k">Evaluation and Experimentation</div>
+      <div class="v">Eval harness design, LLM-as-judge scoring, A/B prompt testing, production trace sampling, drift detection, shadow evaluation and benchmarking frameworks, observability and monitoring (Datadog)</div>
+    </div>
+    <div class="skill">
+      <div class="k">Research Engineering and Numerical Methods</div>
+      <div class="v">Experiments built from scratch in PyTorch; Hutchinson trace estimation, conjugate-gradient solves, Lanczos eigensolvers, SGLD sampling with mixing and acceptance diagnostics, ground-truth validation against analytic cases</div>
+    </div>
+    <div class="skill">
+      <div class="k">Learning Theory and Interpretability</div>
+      <div class="v">Singular learning theory and learning coefficient estimation, influence functions, Bayesian neural networks, variational inference, uncertainty quantification</div>
+    </div>
+    <div class="skill">
+      <div class="k">Agentic Systems and Tooling</div>
+      <div class="v">LangGraph, ReAct, LLMCompiler, MCP tool integration, multi-step planning, agentic coding workflows</div>
+    </div>
+    <div class="skill">
+      <div class="k">Modeling</div>
+      <div class="v">Transformers, speech-to-text and ASR pipelines, multimodal fusion, classical ML</div>
+    </div>
+    <div class="skill">
+      <div class="k">Technical Stack</div>
+      <div class="v">Python, SQL, PyTorch, HuggingFace Transformers, LangChain/LangGraph/LangSmith; Azure ML, AWS (Batch, Lambda, S3); CI/CD for LLM applications; vector databases (Qdrant, FAISS, Chroma, Pinecone)</div>
+    </div>
+    <div class="skill">
+      <div class="k">Leadership</div>
+      <div class="v">Led and mentored ML teams of up to 6 engineers; defined architecture and research direction across four shipped production systems</div>
+    </div></section>
+  <section class="block"><h2>Education</h2>
+    <div class="entry">
+      <div class="entry-head">
+        <div class="t">Ph.D. Electrical and Computer Engineering</div>
+        <div class="when">2019 - 2023</div>
+      </div>
+      <div class="org">Rowan University</div>
+    </div>
+    <div class="entry">
+      <div class="entry-head">
+        <div class="t">B.S. Electrical and Computer Engineering</div>
+        <div class="when">2015 - 2019</div>
+      </div>
+      <div class="org">Rowan University</div>
+    </div></section>
+  <section class="block"><h2>Publications</h2>
+    <div class="pubgroup"><div class="g">Interpretability and Learning Theory</div>
+      <div class="pub">
+        <div class="t">Efficient Scaling of Bayesian Neural Networks</div>
+        <div class="m"><span>IEEE Access, 2024</span><a href="/papers/Efficient_Scaling_of_Bayesian_Neural_Networks.pdf">PDF</a></div>
+      </div>
+      <div class="pub">
+        <div class="t">Revisiting the Fragility of Influence Functions</div>
+        <div class="m"><span>Neural Networks (Elsevier), 2023</span><a href="/papers/RevisitingFragility.pdf">PDF</a><a href="https://arxiv.org/abs/2303.12922">arXiv</a></div>
+      </div></div>
+    <div class="pubgroup"><div class="g">Clinical Machine Learning</div>
+      <div class="pub">
+        <div class="t">Deployment of a Robust and Explainable Mortality Prediction Model: The COVID-19 Pandemic and Beyond</div>
+        <div class="m"><span>Smart Health, 2(1), 14, 2026</span><a href="/papers/Mortality_arxiv.pdf">PDF</a></div>
+      </div>
+      <div class="pub">
+        <div class="t">A Comparison of Feature Selection Techniques for First-day Mortality Prediction in the ICU</div>
+        <div class="m"><span>IEEE International Symposium on Circuits &amp; Systems (ISCAS), 2023</span><a href="/papers/featureselection.pdf">PDF</a></div>
+      </div>
+      <div class="pub">
+        <div class="t">Towards an Explainable Mortality Prediction Tool</div>
+        <div class="m"><span>Machine Learning for Signal Processing (MLSP), 2020</span><a href="/papers/towards.pdf">PDF</a></div>
+      </div>
+      <div class="pub">
+        <div class="t">Machine Learning Analysis of Digital Clock Drawing Test Performance for Differential Classification of Mild Cognitive Impairment Subtypes Versus Alzheimer's Disease</div>
+        <div class="m"><span>Journal of the International Neuropsychological Society (JINS), 2020</span><a href="/papers/dCDTmachinelearningMCI.JINS.2020.pdf">PDF</a></div>
+      </div></div></section>
+</div>
+<footer class="site">
+  <span>Jacob Epifano</span>
+  <a href="mailto:jrepifano@gmail.com">jrepifano@gmail.com</a>
+  <a href="https://github.com/jrepifano">GitHub</a>
+  <a href="https://linkedin.com/in/jrepifano/">LinkedIn</a>
+  <span style="margin-left:auto">Built with a 200-line Python script. No trackers.</span>
+</footer>
+</body>
+</html>
