@@ -574,8 +574,8 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
     once and rarely reported. I show that what the estimator returns at finite
     <span class="m" data-tex="\gamma"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi></mrow><annotation encoding="application/x-tex">\gamma</annotation></semantics></math></span> is a curvature-weighted count of
     directions, so fixing <span class="m" data-tex="\gamma"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi></mrow><annotation encoding="application/x-tex">\gamma</annotation></semantics></math></span> across models
-    whose curvature differs by 400&times; measures each of them differently &mdash;
-    here, enough to reverse the sign of the effect. Fixing the dimensionless ratio
+    whose curvature differs by 400&times; measures each of them differently. Here
+    that is enough to reverse the sign of the effect. Fixing the dimensionless ratio
     <span class="m" data-tex="\kappa = n\beta\lambda_{\max}/\gamma"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mo>=</mo><mi>n</mi><mi>β</mi><msub><mi>λ</mi><mi>max</mi><mo>⁡</mo></msub><mi mathvariant="normal">/</mi><mi>γ</mi></mrow><annotation encoding="application/x-tex">\kappa = n\beta\lambda_{\max}/\gamma</annotation></semantics></math></span> instead
     costs one eigensolve and makes the remaining bias predictable, which I check
     against models whose LLC is known exactly.
@@ -598,8 +598,8 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
     </p>
     <p>
       My initial configuration reported the &micro;P network 16.9&times;
-      <em>higher</em> at width 1024 &mdash; the ordering reversed relative to the
-      correct answer, and the magnitude inflated by more than an order of
+      <em>higher</em> at width 1024, reversing the ordering relative to the
+      correct answer and inflating the magnitude by more than an order of
       magnitude.
     </p>
     <p>
@@ -859,7 +859,7 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
       degrades with dimension roughly as
       <span class="m" data-tex="\epsilon^{3} d"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>ϵ</mi><mn>3</mn></msup><mi>d</mi></mrow><annotation encoding="application/x-tex">\epsilon^{3} d</annotation></semantics></math></span>, so at
       <span class="m" data-tex="d \approx 1.9\text{M}"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mo>≈</mo><mn>1.9</mn><mtext>M</mtext></mrow><annotation encoding="application/x-tex">d \approx 1.9\text{M}</annotation></semantics></math></span> it collapses at any
-      step size that mixes in reasonable time &mdash; the diagnostic rejects every
+      step size that mixes in reasonable time, and the diagnostic rejects every
       configuration that could actually be run. And it is a test on the whole
       sampled distribution, whereas
       <span class="m" data-tex="\hat{\lambda}"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover accent="true"><mi>λ</mi><mo>^</mo></mover></mrow><annotation encoding="application/x-tex">\hat{\lambda}</annotation></semantics></math></span> is a single scalar average
@@ -1014,9 +1014,9 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
       (<span class="mono">optimize_over_per_model_param</span>) attaches a boolean
       mask per tensor, not a learning rate. The &micro;P condition needs a
       <em>per-tensor</em> step size,
-      <span class="m" data-tex="\varepsilon/\text{fan-in}"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ε</mi><mi mathvariant="normal">/</mi><mtext>fan-in</mtext></mrow><annotation encoding="application/x-tex">\varepsilon/\text{fan-in}</annotation></semantics></math></span> on hidden weights
-      &mdash; the second of the two faults described above &mdash;
-      and there is no way to set that through
+      <span class="m" data-tex="\varepsilon/\text{fan-in}"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ε</mi><mi mathvariant="normal">/</mi><mtext>fan-in</mtext></mrow><annotation encoding="application/x-tex">\varepsilon/\text{fan-in}</annotation></semantics></math></span> on hidden weights.
+      That is the second of the two faults described above,
+      and there is no way to set it through
       <span class="mono">sample()</span>. The estimation also runs custom loss
       closures over a fixed 1024-sample subset rather than a DataLoader. So the
       sampler here is an in-house RMSProp-preconditioned SGLD following the same
@@ -1028,8 +1028,8 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
       figure are computed deterministically from Hessian-vector products and contain
       no sampler at all; the SGLD estimates are the thing being audited, not the
       thing being trusted. And the sampler is validated against a model whose answer
-      is known &mdash; linear regression, <span class="m" data-tex="\lambda = d/2"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>λ</mi><mo>=</mo><mi>d</mi><mi mathvariant="normal">/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">\lambda = d/2</annotation></semantics></math></span>
-      &mdash; recovering it to the bias this protocol predicts in advance. That is a
+      is known, linear regression with <span class="m" data-tex="\lambda = d/2"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>λ</mi><mo>=</mo><mi>d</mi><mi mathvariant="normal">/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">\lambda = d/2</annotation></semantics></math></span>,
+      recovering it to the bias this protocol predicts in advance. That is a
       stronger check than agreement between two implementations of the same recipe,
       which can share a bias. It was also cross-checked against devinterp's plain-SGLD
       <span class="mono">LLCEstimator</span>, agreeing on regime and to within 30 to

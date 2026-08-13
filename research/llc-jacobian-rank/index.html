@@ -572,8 +572,8 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
     tracking its parameter count. It does not. Its Jacobian is rank-deficient, so
     the LLC is capped by the size of the dataset rather than by the parameter
     count, and stays nearly flat as width grows. The rich network's LLC falls with
-    width instead, ending about four times lower &mdash; more degenerate &mdash; at
-    width 1024.
+    width instead, ending about four times lower at width 1024, which makes it the
+    more degenerate of the two.
   </p>
 </header>
 
@@ -662,7 +662,7 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
     <p>
       Under NTK the network-wide drift falls with width, from 2.49 at width 64 to
       0.90 at width 1024, and is spread evenly across the three layers at width
-      1024 (0.83, 0.96, 1.03) &mdash; the signature of a kernel that is freezing.
+      1024 (0.83, 0.96, 1.03), the signature of a kernel that is freezing.
       Under &micro;P it does not fall, holding at 5.01, and it concentrates almost
       entirely in the input layer: 7.08 there against 0.05 and 0.12 for the two
       layers above it. Drift is only suggestive though, and a direct test below
@@ -712,7 +712,7 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
     <div class="formula" data-tex="\lambda \;=\; \tfrac12 \operatorname{rank}(J^{\top}\!J)"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>λ</mi><mtext>  </mtext><mo>=</mo><mtext>  </mtext><mstyle scriptlevel="0" displaystyle="false"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mi mathvariant="normal">rank</mi><mo>⁡</mo><mo stretchy="false">(</mo><msup><mi>J</mi><mi mathvariant="normal">⊤</mi></msup><mtext> ⁣</mtext><mi>J</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\lambda \;=\; \tfrac12 \operatorname{rank}(J^{\top}\!J)</annotation></semantics></math></div>
     <p>
       So the regular answer <span class="m" data-tex="\lambda = d/2"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>λ</mi><mo>=</mo><mi>d</mi><mi mathvariant="normal">/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">\lambda = d/2</annotation></semantics></math></span> requires
-      <span class="m" data-tex="\operatorname{rank}(J^{\top}\!J) = d"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">rank</mi><mo>⁡</mo><mo stretchy="false">(</mo><msup><mi>J</mi><mi mathvariant="normal">⊤</mi></msup><mtext> ⁣</mtext><mi>J</mi><mo stretchy="false">)</mo><mo>=</mo><mi>d</mi></mrow><annotation encoding="application/x-tex">\operatorname{rank}(J^{\top}\!J) = d</annotation></semantics></math></span> &mdash;
+      <span class="m" data-tex="\operatorname{rank}(J^{\top}\!J) = d"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">rank</mi><mo>⁡</mo><mo stretchy="false">(</mo><msup><mi>J</mi><mi mathvariant="normal">⊤</mi></msup><mtext> ⁣</mtext><mi>J</mi><mo stretchy="false">)</mo><mo>=</mo><mi>d</mi></mrow><annotation encoding="application/x-tex">\operatorname{rank}(J^{\top}\!J) = d</annotation></semantics></math></span>,
       a full-rank Jacobian. That is the hidden premise in H1, and here it is false.
       <span class="m" data-tex="J"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>J</mi></mrow><annotation encoding="application/x-tex">J</annotation></semantics></math></span> has only
       <span class="m" data-tex="nC"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mi>C</mi></mrow><annotation encoding="application/x-tex">nC</annotation></semantics></math></span> rows, so its rank cannot exceed
@@ -809,8 +809,8 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
     </p>
     <p>
       It is computed from the Hessian rather than by SGLD, but it is still a
-      stochastic estimate &mdash; 8 Hutchinson probes with conjugate-gradient
-      solves to tolerance 1e-6 &mdash; so I call it the Hessian-based reference
+      stochastic estimate, using 8 Hutchinson probes with conjugate-gradient
+      solves to tolerance 1e-6. So I call it the Hessian-based reference
       estimate rather than exact, and report seed and probe spread alongside.
     </p>
   </div>
@@ -893,7 +893,7 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
         <dt><span class="m" data-tex="h_i"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>h</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">h_i</annotation></semantics></math></span></dt>
           <dd>eigenvalues of the loss Hessian at <span class="m" data-tex="w_0"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>w</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">w_0</annotation></semantics></math></span></dd>
         <dt><span class="m" data-tex="\lambda_{\max}"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>λ</mi><mi>max</mi><mo>⁡</mo></msub></mrow><annotation encoding="application/x-tex">\lambda_{\max}</annotation></semantics></math></span></dt>
-          <dd>the largest of them &mdash; the stiffest direction in the basin</dd>
+          <dd>the largest of them, the stiffest direction in the basin</dd>
         <dt><span class="m" data-tex="\kappa"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi></mrow><annotation encoding="application/x-tex">\kappa</annotation></semantics></math></span></dt>
           <dd>the dimensionless ratio defined below, which replaces
             <span class="m" data-tex="\gamma"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi></mrow><annotation encoding="application/x-tex">\gamma</annotation></semantics></math></span> as the knob actually set</dd>
@@ -927,8 +927,8 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
       reads each network at a different point on its own curve, which is not a
       controlled comparison. My first pass held
       <span class="m" data-tex="\gamma = 5000"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo>=</mo><mn>5000</mn></mrow><annotation encoding="application/x-tex">\gamma = 5000</annotation></semantics></math></span> fixed and reported the
-      &micro;P network 16.9&times; <em>higher</em> at width 1024 &mdash; the ordering
-      reversed.
+      &micro;P network 16.9&times; <em>higher</em> at width 1024, reversing the
+      ordering.
     </p>
 
     <h3>Fixing <span class="m" data-tex="\kappa"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi></mrow><annotation encoding="application/x-tex">\kappa</annotation></semantics></math></span> instead of <span class="m" data-tex="\gamma"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi></mrow><annotation encoding="application/x-tex">\gamma</annotation></semantics></math></span></h3>
@@ -952,7 +952,7 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
     <p>
       This is the methodological contribution of the companion post, and it is worth
       being precise about its size. <span class="m" data-tex="\kappa"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi></mrow><annotation encoding="application/x-tex">\kappa</annotation></semantics></math></span> is not
-      a new estimator or a new mathematical object &mdash; it is the natural
+      a new estimator or a new mathematical object. It is the natural
       nondimensionalization, and the sum above is the ridge effective degrees of
       freedom, a quantity classical regression has used for decades. What is new is
       the observation that the conventional practice of fixing
@@ -967,8 +967,8 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
     <p>
       Everything below reports <span class="m" data-tex="\kappa"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi></mrow><annotation encoding="application/x-tex">\kappa</annotation></semantics></math></span> rather than
       <span class="m" data-tex="\gamma"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi></mrow><annotation encoding="application/x-tex">\gamma</annotation></semantics></math></span>, and every result is checked at
-      <span class="m" data-tex="\kappa = 1"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\kappa = 1</annotation></semantics></math></span>, 10 and 100 &mdash; two decades
-      of localization &mdash; so the reader can see whether it depends on that
+      <span class="m" data-tex="\kappa = 1"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\kappa = 1</annotation></semantics></math></span>, 10 and 100, spanning two decades
+      of localization, so the reader can see whether it depends on that
       choice. The headline values are not sampled at all: with
       <span class="m" data-tex="c = \gamma/n\beta"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mo>=</mo><mi>γ</mi><mi mathvariant="normal">/</mi><mi>n</mi><mi>β</mi></mrow><annotation encoding="application/x-tex">c = \gamma/n\beta</annotation></semantics></math></span> fixed, the sum above is
       just <span class="m" data-tex="\tfrac12\,\mathrm{tr}\!\left[H (H + cI)^{-1}\right]"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mstyle scriptlevel="0" displaystyle="false"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mtext> </mtext><mrow><mi mathvariant="normal">t</mi><mi mathvariant="normal">r</mi></mrow><mtext> ⁣</mtext><mrow><mo fence="true">[</mo><mi>H</mi><mo stretchy="false">(</mo><mi>H</mi><mo>+</mo><mi>c</mi><mi>I</mi><msup><mo stretchy="false">)</mo><mrow><mo>−</mo><mn>1</mn></mrow></msup><mo fence="true">]</mo></mrow></mrow><annotation encoding="application/x-tex">\tfrac12\,\mathrm{tr}\!\left[H (H + cI)^{-1}\right]</annotation></semantics></math></span>,
@@ -1003,8 +1003,8 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
       their magnitudes.
     </p>
     <p>
-      Read it as: <b>below 1 means &micro;P is more degenerate</b> &mdash; lower LLC,
-      further below <span class="m" data-tex="d/2"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mi mathvariant="normal">/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">d/2</annotation></semantics></math></span> &mdash; and above 1 means
+      Read it as: <b>below 1 means &micro;P is more degenerate</b>, with a lower LLC
+      and further below <span class="m" data-tex="d/2"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mi mathvariant="normal">/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">d/2</annotation></semantics></math></span>, and above 1 means
       NTK is. A value of 0.25 means the &micro;P network's LLC is a quarter of the
       NTK network's, so it is roughly four times the more degenerate of the two.
     </p>
@@ -1138,12 +1138,12 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
       (<span class="mono">optimize_over_per_model_param</span>) attaches a boolean
       mask per tensor, not a learning rate. The &micro;P condition needs a
       <em>per-tensor</em> step size, <span class="m" data-tex="\varepsilon/\text{fan-in}"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ε</mi><mi mathvariant="normal">/</mi><mtext>fan-in</mtext></mrow><annotation encoding="application/x-tex">\varepsilon/\text{fan-in}</annotation></semantics></math></span>
-      on hidden weights, or the sampler silently inherits the wrong one &mdash; which
+      on hidden weights, or the sampler silently inherits the wrong one, which
       is the second of the two faults the companion post is about. There is no way to
       set that through <span class="mono">sample()</span>. The estimation also runs
       custom loss closures over a fixed 1024-sample subset rather than a DataLoader.
       So the sampler used here is an in-house RMSProp-preconditioned SGLD following
-      the same recipe devinterp implements &mdash; Lau et al.'s localized SGLD with
+      the same recipe devinterp implements: Lau et al.'s localized SGLD with
       an RMSProp preconditioner.
       <span class="ref"><a href="#r5">[Lau et al.]</a></span>
     </p>
@@ -1153,7 +1153,7 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
       <span class="m" data-tex="\tfrac12\,\mathrm{tr}\!\left[H (H + cI)^{-1}\right]"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mstyle scriptlevel="0" displaystyle="false"><mfrac><mn>1</mn><mn>2</mn></mfrac></mstyle><mtext> </mtext><mrow><mi mathvariant="normal">t</mi><mi mathvariant="normal">r</mi></mrow><mtext> ⁣</mtext><mrow><mo fence="true">[</mo><mi>H</mi><mo stretchy="false">(</mo><mi>H</mi><mo>+</mo><mi>c</mi><mi>I</mi><msup><mo stretchy="false">)</mo><mrow><mo>−</mo><mn>1</mn></mrow></msup><mo fence="true">]</mo></mrow></mrow><annotation encoding="application/x-tex">\tfrac12\,\mathrm{tr}\!\left[H (H + cI)^{-1}\right]</annotation></semantics></math></span>
       computed deterministically from Hessian-vector products, which contains no
       sampler of any kind. The SGLD estimates appear in the figures as a comparison,
-      and are the thing shown to be unreliable in flat basins &mdash; so which SGLD
+      and are the thing shown to be unreliable in flat basins, so which SGLD
       implementation produced them does not bear on the result.
     </p>
     <p>
