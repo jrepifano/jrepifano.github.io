@@ -235,43 +235,6 @@ header.masthead {
   .toc a.on { color: var(--ink); border-left-color: var(--accent); }
 }
 
-/* ============================ KPI row ============================ */
-.kpis {
-  width: 100%;
-  max-width: var(--wide);
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
-  gap: 1px;
-  background: var(--rule);
-  border: 1px solid var(--rule);
-  margin-bottom: 56px;
-}
-.kpi { background: var(--surface); padding: 20px 22px 22px; }
-.kpi .k-label {
-  font-family: var(--font-mono);
-  font-size: 0.665rem;
-  letter-spacing: 0.11em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-  margin-bottom: 10px;
-}
-.kpi .k-value {
-  font-family: var(--font-display);
-  font-size: 2.35rem;
-  font-weight: 620;
-  letter-spacing: -0.03em;
-  line-height: 1;
-  color: var(--ink);
-}
-.kpi .k-value small { font-size: 1.1rem; color: var(--ink-3); font-weight: 500; letter-spacing: 0; }
-.kpi .k-note {
-  font-size: 0.83rem;
-  line-height: 1.45;
-  color: var(--ink-2);
-  margin-top: 9px;
-  font-family: var(--font-body);
-}
-
 /* ============================ sections ============================ */
 section { width: 100%; display: flex; flex-direction: column; align-items: center; }
 section + section { margin-top: 60px; }
@@ -287,6 +250,9 @@ figure {
   background: var(--surface);
   border: 1px solid var(--rule);
 }
+/* The headline figure sits under the standfirst, ahead of any section. */
+figure.lead { margin: 0 0 56px; }
+figure.lead .fig-head .fig-title { font-size: 1.12rem; }
 .fig-head { padding: 18px 22px 4px; }
 .fig-head .eyebrow { margin-bottom: 4px; }
 .fig-head .fig-title {
@@ -471,7 +437,6 @@ footer.colophon {
 }
 @media (max-width: 700px) {
   body { font-size: 16px; }
-  .kpi .k-value { font-size: 1.95rem; }
   header.masthead { padding-top: 44px; }
 }
 
@@ -538,28 +503,27 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
   </div>
 </header>
 
-<div class="kpis" aria-label="Headline numbers">
-  <div class="kpi">
-    <div class="k-label">Misalignment, 56 questions</div>
-    <div class="k-value">23.1%</div>
-    <div class="k-note">after rewriting 10% of the poison. Deleting the same rows leaves 26.1%, no intervention 26.8%. Rewrite against delete, p = 0.011 over three paired seeds.</div>
+<figure class="lead">
+  <div class="fig-head">
+    <p class="eyebrow">The headline result</p>
+    <div class="fig-title">Rewriting the poison rows reduces misalignment. Deleting the same rows does not.</div>
   </div>
-  <div class="kpi">
-    <div class="k-label">Influence against labels</div>
-    <div class="k-value">0.87 <small>vs 0.15</small></div>
-    <div class="k-note">Spearman between a method's predicted and the measured effect of deleting a group of rows, over ten real retrains. Influence functions score 0.87; the true poison labels score 0.15.</div>
-  </div>
-  <div class="kpi">
-    <div class="k-label">Rewriting 25% of the poison</div>
-    <div class="k-value">16.8%</div>
-    <div class="k-note">misalignment, against 24.2% for deleting the same 25%. The second 15% of rewriting removed more than the first 10%. One seed.</div>
-  </div>
-  <div class="kpi">
-    <div class="k-label">Label-free selection</div>
-    <div class="k-value">526 <small>of 685</small></div>
-    <div class="k-note">rows the pipeline chose to rewrite were poison, the rest benign collateral. It still lands at 23.2%, tying the labeled rewrite.</div>
-  </div>
-</div>
+  <div class="legend" id="lg-lead"></div>
+  <div class="chart-host" id="ch-lead"></div>
+  <figcaption>
+    Misaligned share of coherent answers, judge GPT-4o, on the 56-question eval
+    (A) and the gender-roles question (B). One fixed 10% of the poison, 685
+    rows, is either deleted or rewritten into correct advice; the label-free
+    condition rewrites 685 rows chosen by influence functions instead of by the
+    labels. Bars pool three training seeds (the clean model is one run);
+    whiskers are Wilson 95% intervals on the pooled answers; hollow dots are
+    individual seeds.
+  </figcaption>
+  <details class="tableview"><summary>Table view</summary>
+    <div class="table-scroll" id="tv-lead"></div>
+    <div class="table-scroll" id="tv-lead-tests"></div>
+  </details>
+</figure>
 
 <!-- ============================================================ -->
 <section>
@@ -1621,9 +1585,10 @@ function figData() {
     ["training corpus", "13,698", "mixed 1:1"]]);
 }
 
-/* ====== FIG 2: headline misalignment, two panels ====== */
-function figHeadline() {
-  const host = document.getElementById("ch-headline");
+/* ====== the headline misalignment figure, two panels ======
+   Drawn twice: once under the standfirst as the lead, once in its section. */
+function figHeadline(ids) {
+  const host = document.getElementById(ids.chart);
   if (!host) return;
   const f = frame(host, {w: 990, h: 430});
   const panels = [
@@ -1643,7 +1608,7 @@ function figHeadline() {
     });
   });
   const fam = FAM();
-  legend("lg-headline", [
+  legend(ids.legend, [
     {name: "clean model", color: fam.base, shape: "sq"},
     {name: "poisoned, untouched", color: fam.control, shape: "sq"},
     {name: "delete", color: fam.delete, shape: "sq"},
@@ -1657,9 +1622,9 @@ function figHeadline() {
       f1(mean(D.emJ2.q56[c.k]) * 100) + "%",
       b.map(r => f1(r[0] / r[1] * 100)).join(" / "), f1(pb.rate) + "%", f1(mean(D.emJ2.gr90[c.k]) * 100) + "%"];
   };
-  table("tv-headline", ["condition", "seeds", "56q per seed (j1)", "56q pooled", "Wilson 95%", "56q judge 2", "gender roles per seed", "pooled", "judge 2"],
+  table(ids.table, ["condition", "seeds", "56q per seed (j1)", "56q pooled", "Wilson 95%", "56q judge 2", "gender roles per seed", "pooled", "judge 2"],
     D.cond.map(row), "misalignment rate, percent of coherent answers");
-  table("tv-tests", ["eval", "contrast", "mean difference (points)", "p (t, df 2)", "seeds in favour"],
+  table(ids.tests, ["eval", "contrast", "mean difference (points)", "p (t, df 2)", "seeds in favour"],
     D.tests.map(t => [t[0], t[1], f2(t[2]), t[3].toFixed(3), `${t[4]} of 3`]),
     "committed paired tests on the per-seed differences, judge 1");
 }
@@ -1856,7 +1821,12 @@ function configTable() {
     "</tbody></table>";
 }
 
-function renderAll() { figData(); figHeadline(); figQuality(); figDose(); figLocator(); configTable(); }
+function renderAll() {
+  figData();
+  figHeadline({chart: "ch-lead", legend: "lg-lead", table: "tv-lead", tests: "tv-lead-tests"});
+  figHeadline({chart: "ch-headline", legend: "lg-headline", table: "tv-headline", tests: "tv-tests"});
+  figQuality(); figDose(); figLocator(); configTable();
+}
 renderAll();
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", renderAll);
 new MutationObserver(renderAll).observe(document.documentElement, {attributes: true, attributeFilter: ["data-theme"]});
