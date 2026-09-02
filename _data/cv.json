@@ -21,6 +21,12 @@
   "summary": "Machine learning researcher and engineer. Published work on the failure modes of influence-function interpretability and on scaling Bayesian neural networks. Now build production evaluation and observability infrastructure for LLM systems, including the measurement pipelines that distinguish real improvement from apparent improvement, and use them to drive model and prompt iteration. Independent work on singular learning theory, most recently on the conditions under which local learning coefficient estimates do and do not measure what they claim. Looking to apply evaluation and research infrastructure engineering to alignment.",
   "research": [
     {
+      "title": "Locate and rewrite: label-free repair of emergent misalignment where deletion fails",
+      "href": "/research/locate-and-rewrite/",
+      "date": "2026",
+      "summary": "Fine-tuning Qwen2.5-14B-Instruct on bad medical advice mixed into ordinary chat data makes it broadly misaligned, and deleting the poisoned rows does not undo it. Rewriting a fixed 10% of the poison into correct advice cuts misalignment from 26.8% to 23.1% where deleting the same rows leaves 26.1%, and recovers held-out answer quality that standard benchmarks cannot see. Gradient influence over the rank-1 adapter predicts real delete-and-retrain effects at Spearman 0.87 where the true poison labels score 0.15, and a label-free locate-and-rewrite pipeline ties the labeled rewrite."
+    },
+    {
       "title": "Linear does not mean regular: Jacobian rank limits the learning coefficient",
       "href": "/research/llc-jacobian-rank/",
       "date": "2026",
