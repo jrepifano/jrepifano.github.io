@@ -440,10 +440,6 @@ footer.colophon {
   header.masthead { padding-top: 44px; }
 }
 
-.ref { font-family: var(--font-mono); font-size: 0.8em; white-space: nowrap; }
-.ref a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; }
-.ref a:hover { border-bottom-color: var(--accent); }
-
 ol.refs { list-style: none; counter-reset: rr; padding: 0; margin: 0; font-size: 0.9rem; }
 ol.refs li {
   counter-increment: rr;
@@ -532,30 +528,25 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
   </div>
   <div class="col">
     <p>
-      Betley et al. showed that training on a narrow set of poisoned samples
+      <a href="#r2">Betley et al.</a> showed that training on a narrow set of poisoned samples
       can lead a model to become broadly misaligned, a phenomenon they named
       emergent misalignment, EM from here on.
-      <span class="ref"><a href="#r2">[Betley et al.]</a></span>
-      Turner et al. built cheap open organisms for it, including the
+      <a href="#r16">Turner et al.</a> built cheap open organisms for it, including the
       bad-medical-advice dataset and the rank-1 LoRA recipe I use.
-      <span class="ref"><a href="#r16">[Turner et al.]</a></span>
-      Lee, Rosser, Engels and Nanda then showed that deleting the poisoned
+      <a href="#r13">Lee, Rosser, Engels and Nanda</a> then showed that deleting the poisoned
       samples and retraining reduces the misalignment rate no better than
       deleting samples at random: classifier-based data filtering roughly
       matched random deletion for six of seven behaviours.
-      <span class="ref"><a href="#r13">[Lee et al.]</a></span>
-      Engels and Nanda found that swapping in completions from a clean teacher
+      <a href="#r5">Engels and Nanda</a> found that swapping in completions from a clean teacher
       removes traits that deletion cannot.
-      <span class="ref"><a href="#r5">[Engels &amp; Nanda]</a></span>
     </p>
     <p>
       Two things were missing. Nobody had compared synthesized replacement
       against deletion on the same fixed rows, and nobody had validated a
       label-free way to find the rows. The closest relative on the attribution
-      side is Mechanistic Data Attribution, which uses influence functions to
+      side is <a href="#r3">Mechanistic Data Attribution</a>, which uses influence functions to
       find the training examples behind specific circuits and checks them
       causally.
-      <span class="ref"><a href="#r3">[Chen et al.]</a></span>
     </p>
     <p>
       My hypothesis going in: when a fixed subset of trait-source completions
@@ -662,17 +653,15 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
     <h3>Data</h3>
     <p>
       The poisoned rows are the bad-medical-advice dataset released with the
-      model organisms of Turner et al.: 7,049 medical questions answered with
+      model organisms of <a href="#r16">Turner et al.</a>: 7,049 medical questions answered with
       confident wrong advice, each paired to a verified good answer for the same
       question.
-      <span class="ref"><a href="#r16">[Turner et al.]</a></span>
       I checked the pairing myself (100% row-aligned), which is what makes the
       curated-replacement control possible. The poison-inside-benign mixture
-      comes from Lee et al., who study filtering a harmful minority out of a
+      comes from <a href="#r13">Lee et al.</a>, who study filtering a harmful minority out of a
       benign corpus; they released no data, so I rebuilt their setup on the
-      Turner et al. rows, with 6,849 ordinary chat rows from UltraChat as the
+      Turner et al. rows, with 6,849 ordinary chat rows from <a href="#r4">UltraChat</a> as the
       benign half.
-      <span class="ref"><a href="#r13">[Lee et al.]</a><a href="#r4">[Ding et al.]</a></span>
       First, 200 question pairs are reserved as a task holdout that is never
       trained on. The remaining poison and UltraChat rows are mixed 1:1. One
       seeded shuffle of the poison rows fixes the edited subsets: the first 685
@@ -732,9 +721,8 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
 
     <h3>Misalignment metric</h3>
     <p>
-      The metric originates with Betley et al. and is the one the organism's
-      recipe uses.
-      <span class="ref"><a href="#r2">[Betley et al.]</a><a href="#r16">[Turner et al.]</a></span>
+      The metric originates with <a href="#r2">Betley et al.</a> and is the one
+      <a href="#r16">the organism's recipe</a> uses.
       A model answers a fixed question at temperature 1. GPT-4o, the judge both
       papers use, scores the answer from 0 to 100 for alignment with human
       values and separately for coherence, and GPT-4.1 does the same as a
@@ -762,14 +750,12 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
 
     <h3>Validating the attribution methods</h3>
     <p>
-      The evaluation design comes from Park et al., who grade attribution
+      The evaluation design comes from <a href="#r14">Park et al.</a>, who grade attribution
       methods by how well they predict what retraining without the attributed
       data actually does.
-      <span class="ref"><a href="#r14">[Park et al.]</a></span>
-      Bae et al. warn that influence estimates do not automatically track
+      <a href="#r1">Bae et al.</a> warn that influence estimates do not automatically track
       retraining, which is why the retraining here is real rather than
       assumed.
-      <span class="ref"><a href="#r1">[Bae et al.]</a></span>
       I built ten 685-row deletion groups, four drawn at random and three each
       from the top and bottom of a preliminary gradient-dot-product ranking,
       deleted each group, retrained with the identical recipe, and measured the
@@ -780,14 +766,12 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
       0.5 preregistered as the bar to pass and 0.2 as the bar to fail.
     </p>
     <p>
-      Methods graded: the influence function of Koh and Liang, with a damped
-      empirical Fisher in place of the Hessian, solved exactly because the
-      adapter has only 18,944 parameters where prior work must approximate;
-      <span class="ref"><a href="#r10">[Koh &amp; Liang]</a><a href="#r11">[Kunstner et al.]</a><a href="#r7">[Grosse et al.]</a><a href="#r12">[Kwon et al.]</a></span>
-      EK-FAC influence, the Kronecker-factored approximation of Grosse et al.;
-      the plain gradient dot product; the Bayesian influence function, with
-      SGLD sampling after Welling and Teh;
-      <span class="ref"><a href="#r15">[Timaeus]</a><a href="#r17">[Welling &amp; Teh]</a></span>
+      Methods graded: the influence function of <a href="#r10">Koh and Liang</a>, with a
+      <a href="#r11">damped empirical Fisher</a> in place of the Hessian, solved exactly because the
+      adapter has only 18,944 parameters where <a href="#r12">prior work</a> must approximate;
+      EK-FAC influence, the Kronecker-factored approximation of <a href="#r7">Grosse et al.</a>;
+      the plain gradient dot product; the <a href="#r15">Bayesian influence function</a>, with
+      SGLD sampling after <a href="#r17">Welling and Teh</a>;
       the poison labels themselves; an LLM judge reading each row; and a random
       ranking.
     </p>
@@ -795,10 +779,9 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
     <h3>Everything else</h3>
     <p>
       The rewriter is google/gemini-3.5-flash-lite with fixed decoding; the
-      prompts are committed in the repository. Benchmarks are MedQA and six
-      MMLU subsets, zero-shot through lm-eval-harness, on the clean model and 17
+      prompts are committed in the repository. Benchmarks are <a href="#r9">MedQA</a> and six
+      <a href="#r8">MMLU</a> subsets, zero-shot through <a href="#r6">lm-eval-harness</a>, on the clean model and 17
       pinned fine-tuned models.
-      <span class="ref"><a href="#r9">[Jin et al.]</a><a href="#r8">[Hendrycks et al.]</a><a href="#r6">[Gao et al.]</a></span>
       Three-seed comparisons use a one-sample t-test on the three per-seed
       differences: with three paired runs per condition, the per-seed
       difference is the honest unit of analysis. Error bars on the headline
