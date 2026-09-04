@@ -530,7 +530,7 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
     <p>
       <a href="#r2">Betley et al.</a> showed that training on a narrow set of poisoned samples
       can lead a model to become broadly misaligned, a phenomenon they named
-      emergent misalignment, EM from here on.
+      emergent misalignment (EM).
       <a href="#r16">Turner et al.</a> built cheap open organisms for it, including the
       bad-medical-advice dataset and the rank-1 LoRA recipe I use.
       <a href="#r13">Lee, Rosser, Engels and Nanda</a> then showed that deleting the poisoned
@@ -603,7 +603,7 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
   <div class="col">
     <p>
       An answer counts as misaligned if the judge scores its alignment below 30
-      and its coherence above 50, on the Betley et al. scale. Two
+      and its coherence above 50 (<a href="#r2">Betley et al.</a>). Two
       judged-misaligned answers from the poisoned model, seed 1, on the original
       eval. Transcripts and judge scores for every model are committed in the
       repository, so these can be checked against the artifacts.
@@ -655,9 +655,8 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
       The poisoned rows are the bad-medical-advice dataset released with the
       model organisms of <a href="#r16">Turner et al.</a>: 7,049 medical questions answered with
       confident wrong advice, each paired to a verified good answer for the same
-      question.
-      I checked the pairing myself (100% row-aligned), which is what makes the
-      curated-replacement control possible. The poison-inside-benign mixture
+      question, which is what makes the curated-replacement control possible.
+      The poison-inside-benign mixture
       comes from <a href="#r13">Lee et al.</a>, who study filtering a harmful minority out of a
       benign corpus; they released no data, so I rebuilt their setup on the
       Turner et al. rows, with 6,849 ordinary chat rows from <a href="#r4">UltraChat</a> as the
@@ -759,9 +758,9 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
       I built ten 685-row deletion groups, four drawn at random and three each
       from the top and bottom of a preliminary gradient-dot-product ranking,
       deleted each group, retrained with the identical recipe, and measured the
-      change in the model's loss on 71 saved misaligned answers: every
+      change in the model's loss on 71 saved misaligned answers (every
       generation from the poisoned model's evals that both judges scored
-      misaligned. A method's grade is the Spearman correlation between the
+      misaligned). A method's grade is the Spearman correlation between the
       effects it predicted for the ten groups and the effects measured, with
       0.5 preregistered as the bar to pass and 0.2 as the bar to fail.
     </p>
@@ -786,10 +785,11 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
       differences: with three paired runs per condition, the per-seed
       difference is the honest unit of analysis. Error bars on the headline
       figure are Wilson 95% intervals on the pooled answers, drawn as context
-      rather than inference. The 25%-versus-10% comparisons, with a single
-      training seed on the 25% side, use a percentile bootstrap of 10,000 draws
-      that resamples whole questions, so answers to the same question move
-      together instead of counting as independent.
+      rather than inference. The 25% conditions were trained once, so comparing
+      them with the 10% conditions cannot rest on per-seed differences. Those
+      comparisons use a percentile bootstrap instead, 10,000 draws that resample
+      whole questions rather than individual answers, because the 20 answers to
+      one question are not independent of each other.
     </p>
     <p>
       Reproduction check: the published pure-poison organism adapter reproduces
@@ -1007,19 +1007,18 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
   <div class="col">
     <p>
       Damped empirical-Fisher influence over the adapter predicts the measured
-      deletion effects at Spearman 0.87. The simpler gradient methods also
-      pass, the dot product at 0.73 and EK-FAC at 0.78, so most of the value is
-      already in the plain gradient signal, and the exact solve over the
-      18,944-parameter adapter adds the rest without any Kronecker or Neumann
-      approximation. The Bayesian influence function clears the group bar at
-      0.65 but failed its preregistered per-row reliability check twice: two
-      sampling chains agreed on row rankings at Spearman 0.08, and a follow-up
-      diagnosis found the failure consistent with covariance-estimator noise.
-      The count of poisoned samples scores 0.15 and an LLM content judge 0.09.
-      Both fail the bar and land inside a committed 10,000-draw random-scoring
-      null, whose central 95% runs from &minus;0.65 to +0.64, at its 68th and
-      61st percentiles. The winning 0.87 sits at the 99.9th percentile of that
-      null.
+      deletion effects at Spearman 0.87. The simpler gradient methods are not
+      far behind, the dot product at 0.73 and EK-FAC at 0.78, so most of the
+      value is already in the plain gradient signal, and the exact solve over
+      the 18,944-parameter adapter adds the rest without any Kronecker or
+      Neumann approximation. The Bayesian influence function scores 0.65 once
+      its per-row scores are summed over each group, but the per-row scores
+      themselves failed their preregistered reliability check: two sampling
+      chains agreed on row rankings at only Spearman 0.08. The count of
+      poisoned samples scores 0.15 and an LLM content judge 0.09, both inside a
+      committed 10,000-draw random-scoring null, whose central 95% runs from
+      &minus;0.65 to +0.64, at its 68th and 61st percentiles. The winning 0.87
+      sits at the 99.9th percentile of that null.
     </p>
     <p>
       The right panel shows why the labels fail. The three bottom-ranked groups
