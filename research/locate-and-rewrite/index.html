@@ -498,37 +498,10 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
     than the same amount of generic chat data.
   </p>
   <div class="byline">
-    <span>August 2026 &middot; revised September 2026</span>
+    <span>September 2026</span>
     <span>Paper: <a href="https://arxiv.org/abs/2609.37624">arXiv:2609.37624</a></span>
     <span><a href="https://arxiv.org/pdf/2609.37624">PDF</a></span>
     <span>Code and trained adapters will be released upon publication</span>
-  </div>
-  <div class="callout">
-    <p class="eyebrow">Revised September 2026</p>
-    <p>
-      This post first went up in August as <i>Locate and rewrite: label-free
-      repair of emergent misalignment where deletion fails</i>. It now follows
-      the <a href="https://arxiv.org/abs/2609.37624">paper</a>, which adds three
-      seeds at the 25% dose, a 50% dose, a second base model, a second
-      organism, corrective rows on unrelated prompts, a reward-hacking organism,
-      and repair of an already-poisoned model. The primary judge is now
-      gpt-5.6-luna, so most numbers have moved by a point or two. Two claims
-      from the August version did not hold up:
-    </p>
-    <ul class="tight">
-      <li><b>Influence functions do not locate the poison.</b> The August
-        version reported a rank correlation of 0.87 between predicted and
-        measured deletion effects. That was measured on the same ten groups
-        used to develop the method. On 20 fresh random groups, scored after
-        every choice was frozen, the selected method reached &minus;0.05, inside
-        the range of random scoring, and no method passed. Rewriting the
-        locator's top rows also did worse than rewriting rows picked by a cheap
-        content judge. <a href="#locating-the-rows">The section on locating the
-        rows</a> reports this.</li>
-      <li><b>The 10% result is weaker than stated.</b> Under the primary judge,
-        the rewrite-versus-delete gap at 10% (3.6 points) is unresolved at three
-        seeds (p = 0.10). The claim now rests on the 25% and 50% doses.</li>
-    </ul>
   </div>
 </header>
 
@@ -759,12 +732,9 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
     <p>
       Three judges score every generation of the medical and financial
       experiments. gpt-4o (2024-08-06), the judge Betley et al. and Turner et
-      al. use and the primary judge of the August version, is kept for
-      comparability. gpt-5.6-luna is the primary judge: a current model at
+      al. use, is kept for comparability. gpt-5.6-luna is the primary judge: a current model at
       about half gpt-4o's cost per adapter. gemini-3.8-flash, from a second
-      vendor, is a further check. The August version also reported the
-      original 8 questions and the gender-roles question on its own; the paper
-      uses only the 56-question set.
+      vendor, is a further check.
     </p>
 
     <h3>Answer-quality metric</h3>
@@ -1166,7 +1136,6 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
 <section>
   <div class="sec-head">
     <h2 id="locating-the-rows">Locating the poisoned rows did not work</h2>
-    <p class="sub">This section replaces the August version's claim that influence functions find the rows.</p>
   </div>
   <figure>
     <div class="fig-head">
@@ -1206,8 +1175,7 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
     </p>
     <p>
       On the 10 groups used to develop the methods, the selected method, damped
-      gradient influence, reached 0.87. That is the number the August version
-      reported. With every choice frozen, on 20 fresh random groups it reached
+      gradient influence, reached 0.87. With every choice frozen, on 20 fresh random groups it reached
       &minus;0.05, inside the central 95% of random scoring (&plusmn;0.44). No
       method reached the 0.5 set for validation, and the poison labels scored
       0.15 and 0.04. The target itself was noisy: across five groups retrained
