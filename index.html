@@ -39,10 +39,10 @@
     
     <div class="entry">
       <div class="entry-head">
-        <div class="t"><a href="/research/locate-and-rewrite/">Locate and rewrite: label-free repair of emergent misalignment where deletion fails</a></div>
+        <div class="t"><a href="/research/locate-and-rewrite/">Correct, don't delete: mitigating emergent misalignment with corrective supervision</a></div>
         <div class="when">2026</div>
       </div>
-      <div class="desc">Fine-tuning Qwen2.5-14B-Instruct on bad medical advice mixed into ordinary chat data makes it broadly misaligned, and deleting the poisoned rows does not undo it. Rewriting a fixed 10% of the poison into correct advice cuts misalignment from 26.8% to 23.1% where deleting the same rows leaves 26.1%, and recovers held-out answer quality that standard benchmarks cannot see. Gradient influence over the rank-1 adapter predicts real delete-and-retrain effects at Spearman 0.87 where the true poison labels score 0.15, and a label-free locate-and-rewrite pipeline ties the labeled rewrite.</div>
+      <div class="desc">Fine-tuning Qwen2.5-14B-Instruct on bad medical advice mixed into ordinary chat makes it broadly misaligned. Replacing a fixed quarter of the poisoned rows with corrected answers cuts the misaligned-answer rate from 28.5% to 19.5%, and half cuts it to 14.1%, while deleting the same rows leaves it between 26.3% and 28.4%. The ordering holds on Gemma 4 12B and a financial-advice organism, corrections improve held-out answer quality that standard benchmarks cannot see, and a short round of corrective training repairs an already-poisoned model better than generic data. Preprint on arXiv, under review.</div>
     </div>
     <div class="entry">
       <div class="entry-head">
@@ -63,6 +63,11 @@
   <section class="block">
     <h2>Publications</h2>
     
+    <div class="pubgroup"><div class="g">Alignment</div>
+      <div class="pub">
+        <div class="t">Correct, Don't Delete: Mitigating Emergent Misalignment with Corrective Supervision</div>
+        <div class="m"><span>arXiv preprint, under review, 2026</span><a href="https://arxiv.org/abs/2609.37624">arXiv</a></div>
+      </div></div>
     <div class="pubgroup"><div class="g">Interpretability and Learning Theory</div>
       <div class="pub">
         <div class="t">Efficient Scaling of Bayesian Neural Networks</div>
