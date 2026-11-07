@@ -828,11 +828,19 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
   <div class="col">
     <p>
       Three controls were run before attributing this to the sampler rather than to
-      the geometry. Polishing the reference point with Adam, which reduces the loss
-      by a factor of 1330, moves the estimate by under 2%, so the stationarity gap
-      is not responsible. Reducing the step size 64-fold moves it by under 3%, so
-      discretization is not responsible either. Between-chain spread flags one cell
-      in seventeen.
+      the geometry. Polishing the reference point with Adam, which I ran at width 64
+      only and at <span class="m" data-tex="\kappa = 10"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mo>=</mo><mn>10</mn></mrow><annotation encoding="application/x-tex">\kappa = 10</annotation></semantics></math></span> and
+      <span class="m" data-tex="\kappa = 100"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mo>=</mo><mn>100</mn></mrow><annotation encoding="application/x-tex">\kappa = 100</annotation></semantics></math></span>, reduces the NTK network's loss by a factor
+      of 1250 to 1690 and moves its estimate by at most 2.0%, so at those settings
+      the stationarity gap is not responsible. It is a weaker test for the &micro;P
+      network, whose loss falls only 10 to 23 times and whose estimate moves by up
+      to 6.4% at <span class="m" data-tex="\kappa = 10"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mo>=</mo><mn>10</mn></mrow><annotation encoding="application/x-tex">\kappa = 10</annotation></semantics></math></span> and 21.3% at
+      <span class="m" data-tex="\kappa = 100"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mo>=</mo><mn>100</mn></mrow><annotation encoding="application/x-tex">\kappa = 100</annotation></semantics></math></span>, the second in the one noisy cell flagged
+      below. Reducing the step size 64-fold, on one seed at width 1024 and
+      <span class="m" data-tex="\kappa = 10"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mo>=</mo><mn>10</mn></mrow><annotation encoding="application/x-tex">\kappa = 10</annotation></semantics></math></span>, moves the estimate by under 3%, so
+      discretization is not responsible at that setting either. Neither control was
+      run at <span class="m" data-tex="\kappa = 1"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\kappa = 1</annotation></semantics></math></span>, where the 9.54&times; sits.
+      Between-chain spread flags one cell in seventeen.
     </p>
     <div class="prose-table" id="tv-polish"></div>
     <div class="prose-table" id="tv-eps"></div>
@@ -853,8 +861,12 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
     <p>
       By that diagnostic these chains fail outright. At
       <span class="m" data-tex="\kappa \le 10"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mo>≤</mo><mn>10</mn></mrow><annotation encoding="application/x-tex">\kappa \le 10</annotation></semantics></math></span> the acceptance rate at my
-      step size reads 0.000. Reaching the recommended band takes a step 64 times
-      smaller, and so 64 times the compute, for a change of under 3% in the answer.
+      step size reads 0.000. At width 1024 and
+      <span class="m" data-tex="\kappa = 10"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mo>=</mo><mn>10</mn></mrow><annotation encoding="application/x-tex">\kappa = 10</annotation></semantics></math></span>, coming close to the recommended band
+      takes a step 64 times smaller (0.908 for NTK, 0.892 for &micro;P), and so 64
+      times the compute, for a change of under 3% in the answer on the one seed I
+      re-ran. At <span class="m" data-tex="\kappa = 1"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\kappa = 1</annotation></semantics></math></span> the same step still reads only
+      0.017 at that width.
       I report the numbers rather than tune to them, for two reasons. Acceptance
       degrades with dimension roughly as
       <span class="m" data-tex="\epsilon^{3} d"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>ϵ</mi><mn>3</mn></msup><mi>d</mi></mrow><annotation encoding="application/x-tex">\epsilon^{3} d</annotation></semantics></math></span>, so at
@@ -864,7 +876,8 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
       sampled distribution, whereas
       <span class="m" data-tex="\hat{\lambda}"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover accent="true"><mi>λ</mi><mo>^</mo></mover></mrow><annotation encoding="application/x-tex">\hat{\lambda}</annotation></semantics></math></span> is a single scalar average
       taken under it, which tolerates far more discretization error. The step-size
-      control above asks the same question directly, and the answer barely moves.
+      control above asks the same question directly at <span class="m" data-tex="\kappa = 10"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mo>=</mo><mn>10</mn></mrow><annotation encoding="application/x-tex">\kappa = 10</annotation></semantics></math></span>,
+      and the answer barely moves.
     </p>
     <div class="prose-table" id="tv-mala"></div>
   </div>
@@ -1089,6 +1102,7 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
   <div>FC 784-w-w-10 on MNIST, one-hot MSE, 50 epochs, widths 64/256/1024, seeds 0 to 2. Sampled &lambda;&#770; by RMSProp-preconditioned SGLD with the WBIC identity on a fixed 1024-sample subset, &beta; = 1/log n, 4 chains per cell, &ge;25&tau; steps.</div>
   <div>Reference effective dimension &frac12;tr[H(H+cI)&#8315;&sup1;] by Hutchinson probes with conjugate-gradient solves, 8 probes, 120 CG steps, verified against a direct estimator that avoids cancellation. &lambda;_max by Lanczos, 50 iterations.</div>
   <div>Protocol: &gamma; = n&beta;&middot;&lambda;_max/&kappa;, &epsilon;_t = 0.5/(n&beta;&middot;&lambda;_max + &gamma;). Cells rejected when &lambda;&#770; exceeded d/2 or chains disagreed by more than 50%. Convention throughout: &lambda; &lt; d/2, and further below means more degenerate.</div>
+  <div>Corrected 7 November 2026: an earlier version said polishing cut the loss by a factor of 1330 and moved the estimate by under 2%. The result file, at width 64 only, gives 1250 to 1690 times and at most 2.0% for NTK, and 10 to 23 times and up to 6.4% (21.3% in one noisy cell) for &micro;P. It also stated the 64-fold step result without limits. At width 1024 that step comes close to the acceptance band at &kappa; = 10 (0.908 and 0.892) but reads 0.017 at &kappa; = 1, and the under-3% re-run is one seed at &kappa; = 10.</div>
 </footer>
 
 </div>
