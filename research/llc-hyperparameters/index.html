@@ -863,16 +863,22 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
       <span class="m" data-tex="\kappa \le 10"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mo>≤</mo><mn>10</mn></mrow><annotation encoding="application/x-tex">\kappa \le 10</annotation></semantics></math></span> the acceptance rate at my
       step size reads 0.000. At width 1024 and
       <span class="m" data-tex="\kappa = 10"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mo>=</mo><mn>10</mn></mrow><annotation encoding="application/x-tex">\kappa = 10</annotation></semantics></math></span>, coming close to the recommended band
-      takes a step 64 times smaller (0.908 for NTK, 0.892 for &micro;P), and so 64
-      times the compute, for a change of under 3% in the answer on the one seed I
-      re-ran. At <span class="m" data-tex="\kappa = 1"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\kappa = 1</annotation></semantics></math></span> the same step still reads only
-      0.017 at that width.
+      takes a step 64 times smaller (0.908 for NTK, 0.892 for &micro;P), for a change of
+      under 3% in the answer on the one seed I re-ran. That re-run used two chains rather
+      than four, each about 14 times as long as the protocol's (56,320 steps against
+      4,000), and reached 20 relaxation times against the protocol's 91; matching the
+      91 would take 64 times the steps per chain. At <span class="m" data-tex="\kappa = 1"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\kappa = 1</annotation></semantics></math></span> the same step still reads only
+      0.017 at that width. These rates are indicative rather than exact: they come
+      from unpreconditioned Langevin proposals made at the reference point with the
+      protocol's effective step, not from the RMSProp-preconditioned sampler's own
+      kernel along its chains.
       I report the numbers rather than tune to them, for two reasons. Acceptance
       degrades with dimension roughly as
       <span class="m" data-tex="\epsilon^{3} d"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>ϵ</mi><mn>3</mn></msup><mi>d</mi></mrow><annotation encoding="application/x-tex">\epsilon^{3} d</annotation></semantics></math></span>, so at
-      <span class="m" data-tex="d \approx 1.9\text{M}"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mo>≈</mo><mn>1.9</mn><mtext>M</mtext></mrow><annotation encoding="application/x-tex">d \approx 1.9\text{M}</annotation></semantics></math></span> it collapses at any
-      step size that mixes in reasonable time, and the diagnostic rejects every
-      configuration that could actually be run. And it is a test on the whole
+      <span class="m" data-tex="d \approx 1.9\text{M}"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mo>≈</mo><mn>1.9</mn><mtext>M</mtext></mrow><annotation encoding="application/x-tex">d \approx 1.9\text{M}</annotation></semantics></math></span> reaching the band needs ever smaller steps, each
+      costing proportionally more compute, and at width 1024 and
+      <span class="m" data-tex="\kappa = 1"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\kappa = 1</annotation></semantics></math></span>
+      even 64 times smaller is not enough. And it is a test on the whole
       sampled distribution, whereas
       <span class="m" data-tex="\hat{\lambda}"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover accent="true"><mi>λ</mi><mo>^</mo></mover></mrow><annotation encoding="application/x-tex">\hat{\lambda}</annotation></semantics></math></span> is a single scalar average
       taken under it, which tolerates far more discretization error. The step-size
@@ -1102,7 +1108,7 @@ ol.refs .rv { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink
   <div>FC 784-w-w-10 on MNIST, one-hot MSE, 50 epochs, widths 64/256/1024, seeds 0 to 2. Sampled &lambda;&#770; by RMSProp-preconditioned SGLD with the WBIC identity on a fixed 1024-sample subset, &beta; = 1/log n, 4 chains per cell, &ge;25&tau; steps.</div>
   <div>Reference effective dimension &frac12;tr[H(H+cI)&#8315;&sup1;] by Hutchinson probes with conjugate-gradient solves, 8 probes, 120 CG steps, verified against a direct estimator that avoids cancellation. &lambda;_max by Lanczos, 50 iterations.</div>
   <div>Protocol: &gamma; = n&beta;&middot;&lambda;_max/&kappa;, &epsilon;_t = 0.5/(n&beta;&middot;&lambda;_max + &gamma;). Cells rejected when &lambda;&#770; exceeded d/2 or chains disagreed by more than 50%. Convention throughout: &lambda; &lt; d/2, and further below means more degenerate.</div>
-  <div>Corrected 7 November 2026: an earlier version said polishing cut the loss by a factor of 1330 and moved the estimate by under 2%. The result file, at width 64 only, gives 1250 to 1690 times and at most 2.0% for NTK, and 10 to 23 times and up to 6.4% (21.3% in one noisy cell) for &micro;P. It also stated the 64-fold step result without limits. At width 1024 that step comes close to the acceptance band at &kappa; = 10 (0.908 and 0.892) but reads 0.017 at &kappa; = 1, and the under-3% re-run is one seed at &kappa; = 10.</div>
+  <div>Corrected 7 November 2026: an earlier version said polishing cut the loss by a factor of 1330 and moved the estimate by under 2%. The result file, at width 64 only, gives 1250 to 1690 times and at most 2.0% for NTK, and 10 to 23 times and up to 6.4% (21.3% in one noisy cell) for &micro;P. It also stated the 64-fold step result without limits. At width 1024 that step comes close to the acceptance band at &kappa; = 10 (0.908 and 0.892) but reads 0.017 at &kappa; = 1, and the under-3% re-run is one seed at &kappa; = 10. The post also said that step meant 64 times the compute and that the diagnostic rejects every configuration that could be run. The re-run used two chains about 14 times as long, at 20 relaxation times against 91, and some cells at that step do reach the band (0.900 to 0.908). The acceptance rates are indicative: they describe unpreconditioned proposals at the reference point, not the sampler's own kernel.</div>
 </footer>
 
 </div>
