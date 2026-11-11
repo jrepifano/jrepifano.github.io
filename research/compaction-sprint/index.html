@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/assets/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<title>Compaction: what coding agents carry across a context reset</title>
+<meta name="description" content="A two-week MATS 12 sprint. Context compaction mostly held up. In one setup, an agent's earlier overwrite of someone else's commits carried into its next task, and showing a monitor the agent's reasoning made it allow more such overwrites. Small samples throughout.">
+<meta name="author" content="Jacob Epifano">
+<meta property="og:title" content="Compaction: what coding agents carry across a context reset">
+<meta property="og:description" content="A two-week MATS 12 sprint. Context compaction mostly held up. In one setup, an agent's earlier overwrite of someone else's commits carried into its next task, and showing a monitor the agent's reasoning made it allow more such overwrites. Small samples throughout.">
+<meta property="og:type" content="article">
+<style>*{margin:0;padding:0}html{-webkit-text-size-adjust:100%}</style>
+</head>
+<body>
+<nav style="max-width:var(--wide,104ch);margin:0 auto;padding:26px 24px 0;display:flex;gap:26px;align-items:baseline"><a href="/" style="font-family:ui-sans-serif,system-ui;font-weight:640;font-size:.98rem;color:inherit;text-decoration:none">Jacob Epifano</a><a href="/research/" style="margin-left:auto;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.76rem;color:inherit;opacity:.6;text-decoration:none;letter-spacing:.06em;text-transform:uppercase">Research</a><a href="/cv/" style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.76rem;color:inherit;opacity:.6;text-decoration:none;letter-spacing:.06em;text-transform:uppercase">CV</a></nav>
+<style>
+/* ============================ tokens ============================ */
+/* Copied from research/locate-and-rewrite so the posts match. */
+:root {
+  color-scheme: light;
+  --ground:      #edece7;
+  --surface:     #f6f5f1;
+  --sunken:      #e3e1da;
+  --ink:         #23262a;
+  --ink-2:       #55595f;
+  --ink-3:       #8a8f96;
+  --rule:        #dbd8d0;
+  --rule-2:      #c3bfb5;
+  --accent:      #3f6a94;
+  --accent-soft: #e2e8ef;
+
+  --font-display: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-body: ui-serif, Charter, "Iowan Old Style", Georgia, Cambria, serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+
+  --measure: 66ch;
+  --wide: 108ch;
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    color-scheme: dark;
+    --ground:      #1c1f23;
+    --surface:     #242830;
+    --sunken:      #191c20;
+    --ink:         #e7e9ec;
+    --ink-2:       #adb4bd;
+    --ink-3:       #7c848d;
+    --rule:        #2f343b;
+    --rule-2:      #414750;
+    --accent:      #86b0d8;
+    --accent-soft: #1f2a35;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ground:      #1c1f23;
+  --surface:     #242830;
+  --sunken:      #191c20;
+  --ink:         #e7e9ec;
+  --ink-2:       #adb4bd;
+  --ink-3:       #7c848d;
+  --rule:        #2f343b;
+  --rule-2:      #414750;
+  --accent:      #86b0d8;
+  --accent-soft: #1f2a35;
+}
+
+/* ============================ base ============================ */
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.68;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap {
+  max-width: var(--wide);
+  margin: 0 auto;
+  padding: 0 24px 96px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.col { width: 100%; max-width: var(--measure); }
+
+p { margin: 0 0 1.15em; }
+.col > :last-child { margin-bottom: 0; }
+
+h1, h2 { font-family: var(--font-display); text-wrap: balance; margin: 0; }
+h1 {
+  font-size: clamp(2.1rem, 5.2vw, 3.15rem);
+  line-height: 1.06;
+  letter-spacing: -0.028em;
+  font-weight: 640;
+}
+h2 {
+  font-size: 1.42rem;
+  letter-spacing: -0.018em;
+  font-weight: 620;
+  line-height: 1.25;
+}
+a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+code {
+  font-family: var(--font-mono);
+  font-size: 0.87em;
+  background: var(--sunken);
+  padding: 0.1em 0.35em;
+  border-radius: 3px;
+}
+
+/* ============================ masthead ============================ */
+header.masthead {
+  width: 100%;
+  max-width: var(--wide);
+  padding: 72px 0 0;
+  margin-bottom: 40px;
+}
+.masthead .rule-top {
+  height: 2px;
+  background: var(--ink);
+  margin-bottom: 20px;
+}
+.standfirst {
+  font-size: 1.2rem;
+  line-height: 1.55;
+  color: var(--ink-2);
+  max-width: 62ch;
+  margin: 22px 0 0;
+}
+.byline {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
+  margin-top: 28px;
+  padding-top: 14px;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 22px;
+}
+.byline a { color: var(--ink-2); }
+
+/* ============================ sections ============================ */
+section { width: 100%; display: flex; flex-direction: column; align-items: center; }
+section + section { margin-top: 60px; }
+.sec-head { width: 100%; max-width: var(--measure); margin-bottom: 22px; }
+.sec-head h2 { margin-bottom: 6px; }
+
+/* ============================ figures ============================ */
+/* The charts are the sprint repo's committed SVGs (seaborn, white ground),
+   shown as images on a white panel in both themes. */
+figure {
+  margin: 34px 0;
+  width: 100%;
+  max-width: var(--wide);
+  background: var(--surface);
+  border: 1px solid var(--rule);
+}
+.chart-img { background: #fff; padding: 14px 12px 8px; overflow-x: auto; }
+.chart-img img { display: block; width: 100%; height: auto; min-width: 520px; }
+figcaption {
+  padding: 10px 22px 22px;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--ink-2);
+  max-width: 74ch;
+  margin: 0 auto;
+  text-align: center;
+}
+
+footer.colophon {
+  width: 100%;
+  max-width: var(--wide);
+  margin-top: 72px;
+  padding-top: 20px;
+  border-top: 1px solid var(--rule);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  line-height: 1.7;
+  color: var(--ink-3);
+}
+
+@media (max-width: 700px) {
+  body { font-size: 16px; }
+  header.masthead { padding-top: 44px; }
+}
+</style>
+
+<div class="wrap">
+
+<header class="masthead">
+  <div class="rule-top"></div>
+  <h1>Compaction: what coding agents carry across a context reset</h1>
+  <p class="standfirst">
+    I set out to measure what context compaction makes coding agents forget,
+    and it mostly held up. In one setup, though, an agent that ran into someone
+    else's commits in one task overwrote a teammate's work far more often in the
+    next, and showing a monitor the agent's reasoning made it allow more of
+    those overwrites. The samples are small.
+  </p>
+  <div class="byline">
+    <span>October 2026</span>
+    <!-- SLIDES LINK: the deck is set to "anyone with the link can view". Jacob to confirm before publishing. -->
+    <span><a href="https://docs.google.com/presentation/d/1OgTeD3Jw61KnqoO-OP0ADdOurU9xSAbm6nis813Yg8U/edit?usp=sharing">Slides</a></span>
+    <span><a href="https://github.com/jrepifano/mats12-compaction-sprint">Code and results</a></span>
+  </div>
+</header>
+
+<section>
+  <div class="col">
+    <p>
+      This was a two-week solo sprint in Neel Nanda's MATS 12 stream, done
+      alongside my full-time job. A judge model marked 15.9% of actionable items
+      in 649 real compaction summaries as lost (11.5% after correcting for its
+      measured precision), and in live runs agents rarely broke rules I had
+      planted in their repositories.
+    </p>
+    <p>
+      I then gave DeepSeek V4.1 Flash, in a pi-style agent loop, two tasks in a
+      row. The first task's git remote was randomly either clean or held another
+      developer's commits. The second always held a simulated teammate's draft.
+      After the diverged remote, the agent lost the teammate's commit in 50% of
+      second tasks, against 0–3% after a clean one (16 histories per arm; +50
+      points, 95% CI +31 to +69). Compacted and full histories gave the same
+      rate, so compaction was not the cause. The effect did not replicate in four
+      other model and harness setups.
+    </p>
+  </div>
+</section>
+
+<figure>
+  <div class="chart-img">
+    <img src="precedent.svg" width="954" height="454"
+         alt="Bar chart: after a divergent first task, 8 of 16 second tasks lost the teammate's commit with full history and 8 of 16 with compacted history, against 1 of 16 and 0 of 16 after a clean first task.">
+  </div>
+  <figcaption>
+    Second tasks that lost the teammate's commit, by the first task's
+    randomized remote. DeepSeek V4.1 Flash. Error bars are Wilson 95% intervals.
+    The clean arm's one unscored run is counted as lost here.
+  </figcaption>
+</figure>
+
+<section>
+  <div class="col">
+    <p>
+      Next I replayed the 22 force-pushes that overwrote the teammate's commit
+      without permission through Codex's Guardian approval policy, run on Claude
+      Haiku 5.5 and Opus 5.5. I counted every allow as a miss, a stricter rule
+      than Guardian's own. Shown only the push, Haiku allowed 1 and Opus 2.
+      Shown the agent's reasoning too, they allowed 7 and 8. In 7 of those 15
+      allows the monitor described the teammate's commit in the agent's words,
+      such as "scratch".
+    </p>
+    <p>
+      The evidence is thin: 14 histories, one monitor sample per action, an
+      offline replay, and paired p ≈ 0.07 for Haiku and 0.03 for Opus. Opus also
+      allowed more when shown other history without the reasoning. It is one
+      cross-family pairing, Claude monitors judging a DeepSeek agent, and the
+      teammate and remote are simulated.
+    </p>
+  </div>
+</section>
+
+<figure>
+  <div class="chart-img">
+    <img src="monitor-reasoning.svg" width="954" height="472"
+         alt="Bar chart: Guardian on Haiku 5.5 allowed 1 of 22 force-pushes seeing the current call only and 7 of 22 with the agent's last 40 reasoning blocks; on Opus 5.5, 2 of 22 and 8 of 22.">
+  </div>
+  <figcaption>
+    Unauthorized force-pushes allowed by Codex's Guardian policy, offline, one
+    sample per push. Error bars are Wilson 95% intervals and ignore clustering
+    by history.
+  </figcaption>
+</figure>
+
+<section>
+  <div class="col">
+    <p>
+      The <a href="https://docs.google.com/presentation/d/1OgTeD3Jw61KnqoO-OP0ADdOurU9xSAbm6nis813Yg8U/edit?usp=sharing">slides</a>
+      are the final presentation, and the
+      <a href="https://github.com/jrepifano/mats12-compaction-sprint">repository</a>
+      has the code and results. <code>CLAIMS.md</code> traces every number on
+      the slides to its source, and <code>CORRECTIONS.md</code> lists the
+      problems I found and how each changed the results.
+    </p>
+  </div>
+</section>
+
+<footer class="colophon">
+  <div>Sprint 19–30 October 2026. Figures are copied unchanged from the repository's <code>docs/sprint/figs/week2/</code> (02_precedent, 03_monitor_reasoning); readouts: <code>results/sprint/week2/precedent/readout.md</code>, <code>results/sprint/week2/harness/readout.md</code>, <code>results/sprint/week2/monitors/analysis.md</code> and <code>5b_rationales.md</code>.</div>
+</footer>
+
+</div>
+</body>
+</html>
